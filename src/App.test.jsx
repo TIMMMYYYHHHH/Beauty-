@@ -130,4 +130,14 @@ describe('Ané Lumière storefront', () => {
     expect(screen.getByText(/Orders of R450 or more include complimentary delivery/i)).toBeInTheDocument()
     expect(screen.getByText(/newsletter saves one email address only in your browser storage/i)).toBeInTheDocument()
   })
+
+  it('lets visitors pause and resume spectacle motion', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Pause motion effects' }))
+    expect(screen.getByRole('button', { name: 'Play motion effects' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Play motion effects' }))
+    expect(screen.getByRole('button', { name: 'Pause motion effects' })).toBeInTheDocument()
+  })
 })

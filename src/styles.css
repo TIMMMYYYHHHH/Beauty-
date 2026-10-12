@@ -57,7 +57,7 @@ h1, h2, h3, .logo { font-family: Georgia, 'Times New Roman', serif; font-weight:
 .shop-heading h2 { margin-top: 6px; font-size: 34px; line-height: 1.1; }
 .shop-heading p { margin-top: 10px; font-size: 13px; color: var(--muted); }
 .bundle-list { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.bundle { min-height: 116px; padding: 18px; display: grid; grid-template-columns: 24px 58px minmax(100px, 1fr) auto; gap: 10px; align-items: center; text-align: left; border: 1px solid var(--line); border-radius: 12px; background: transparent; }
+.bundle { min-height: 116px; padding: 18px; display: grid; grid-template-columns: 22px 48px minmax(0, 1fr); gap: 10px; align-items: center; text-align: left; border: 1px solid var(--line); border-radius: 12px; background: transparent; }
 .bundle:hover { background: rgba(255,255,255,.25); }
 .bundle.selected { padding: 17px; border: 2px solid var(--cocoa); background: var(--powder-soft); }
 .radio { width: 20px; height: 20px; display: grid; place-items: center; border: 1px solid var(--cocoa); border-radius: 50%; }
@@ -67,7 +67,7 @@ h1, h2, h3, .logo { font-family: Georgia, 'Times New Roman', serif; font-weight:
 .bundle-quantity small, .bundle-name small, .bundle-price small { font-size: 11px; color: var(--muted); }
 .bundle-name, .bundle-price { display: grid; gap: 5px; }
 .bundle-name strong { font-size: 14px; }
-.bundle-price { text-align: right; }
+.bundle-price { grid-column: 3; display: flex; align-items: baseline; gap: 8px; text-align: left; }
 .bundle-price strong { font: 25px Georgia, serif; }
 .purchase-row { display: grid; gap: 10px; }
 .purchase-row p { text-align: center; font-size: 12px; color: var(--muted); }
@@ -210,7 +210,8 @@ footer a:focus-visible { outline-color: var(--cream); }
   .nav.scrolled { margin: 0; padding: 0 18px; }
   .nav > .mobile-only { justify-self: start; }
   .logo { font-size: 20px; }
-  .logo span { font-size: 10px; letter-spacing: .22em; }
+  .logo span { font-size: 12px; letter-spacing: .16em; }
+  .eyebrow, .shop-heading span, .story-intro > span, .story-note > span, .texture-copy > span, .reviews > span, .faq-heading > span, .newsletter > div > span { font-size: 12px; }
   .bag-button span { display: none; }
   .hero { min-height: 422px; margin: 0 14px; display: block; border-radius: 20px; }
   .hero-copy { width: 66%; padding: 30px 0 24px 24px; }
@@ -248,7 +249,7 @@ footer a:focus-visible { outline-color: var(--cream); }
   .nav { margin: 0 12px; }
   .nav.scrolled { padding: 0 12px; }
   .logo { font-size: 18px; white-space: nowrap; }
-  .logo span { margin-top: 5px; font-size: 10px; }
+  .logo span { margin-top: 5px; font-size: 12px; }
   .hero { margin: 0 10px; }
   .eyebrow { font-size: 10px; }
   .shop { padding: 27px 14px 36px; }

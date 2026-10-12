@@ -80,4 +80,54 @@ describe('Ané Lumière storefront', () => {
     expect(screen.queryByRole('dialog', { name: 'Shopping bag' })).not.toBeInTheDocument()
     expect(opener).toHaveFocus()
   })
+
+  it('supports complimentary delivery and cart removal', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /Add to bag — R499/i }))
+    const bag = screen.getByRole('dialog', { name: 'Shopping bag' })
+    expect(bag).toHaveTextContent('You qualify for complimentary delivery')
+    expect(bag).toHaveTextContent('R499')
+    await user.click(screen.getByRole('button', { name: 'Remove' }))
+    expect(screen.getByRole('heading', { name: /Your bag is waiting/i })).toBeInTheDocument()
+  })
+
+  it('keeps invalid checkout details on the delivery step', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /Add to bag — R499/i }))
+    await user.click(screen.getByRole('button', { name: /Continue to checkout/i }))
+    await user.type(screen.getByLabelText('Email address'), 'not-an-email')
+    await user.click(screen.getByRole('button', { name: /Continue to payment/i }))
+
+    expect(screen.getByRole('heading', { name: /Where should we send your glow/i })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /Ready for secure payment/i })).not.toBeInTheDocument()
+  })
+
+  it('updates reviews and FAQ answers', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    expect(screen.getByText(/My skin looks rested/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Next review' }))
+    expect(screen.getByText(/I noticed a softer, brighter look/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /Is it suitable for sensitive skin/i }))
+    expect(screen.getByText(/fragrance-free formula uses calming ingredients/i)).toBeInTheDocument()
+  })
+
+  it('contains mobile menu focus and publishes policy details', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const opener = screen.getByRole('button', { name: 'Open menu' })
+    await user.click(opener)
+    const menu = screen.getByRole('dialog', { name: 'Navigation menu' })
+    expect(menu).toContainElement(document.activeElement)
+    await user.keyboard('{Escape}')
+    expect(opener).toHaveFocus()
+    expect(screen.getByText(/Orders of R450 or more include complimentary delivery/i)).toBeInTheDocument()
+    expect(screen.getByText(/newsletter saves one email address only in your browser storage/i)).toBeInTheDocument()
+  })
 })

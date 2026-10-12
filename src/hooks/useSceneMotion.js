@@ -7,7 +7,6 @@ export function useSceneMotion(active) {
     if (!active) {
       root.classList.remove('motion-active')
       root.style.setProperty('--mx', '0')
-      root.style.setProperty('--my', '0')
       scenes.forEach((scene) => scene.style.setProperty('--scene-progress', '.65'))
       return undefined
     }
@@ -15,7 +14,6 @@ export function useSceneMotion(active) {
     const visibleScenes = new Set()
     let frame = 0
     let pointerX = window.innerWidth / 2
-    let pointerY = window.innerHeight / 2
     let pointerDirty = true
     let scrollDirty = true
 
@@ -25,12 +23,10 @@ export function useSceneMotion(active) {
       const height = Math.max(window.innerHeight, 1)
       if (pointerDirty) {
         root.style.setProperty('--mx', ((pointerX / width) - 0.5).toFixed(3))
-        root.style.setProperty('--my', ((pointerY / height) - 0.5).toFixed(3))
         pointerDirty = false
       }
       if (scrollDirty) {
         const measurements = [...visibleScenes].map((scene) => ({ scene, rect: scene.getBoundingClientRect() }))
-        root.style.setProperty('--page-scroll', `${window.scrollY}px`)
         measurements.forEach(({ scene, rect }) => {
           const progress = (height - rect.top) / (height + rect.height)
           scene.style.setProperty('--scene-progress', Math.max(0, Math.min(1, progress)).toFixed(3))
@@ -58,7 +54,6 @@ export function useSceneMotion(active) {
     const onResize = () => { scrollDirty = true; pointerDirty = true; requestUpdate() }
     const onPointer = (event) => {
       pointerX = event.clientX
-      pointerY = event.clientY
       pointerDirty = true
       requestUpdate()
     }

@@ -6,13 +6,12 @@
   --cream: #f7f2e8;
   --ivory: #fffdf7;
   --clay: #cbbbaa;
-  --taupe: #8a7b70;
+  --taupe: #6d5e54;
   --ink: #40362f;
   --line: rgba(64, 54, 47, .2);
   --shadow: 0 30px 80px rgba(64, 54, 47, .14);
   --scene-progress: .65;
   --mx: 0;
-  --my: 0;
   font-family: 'DM Sans', Arial, sans-serif;
   color: var(--ink);
   background: var(--powder);
@@ -48,7 +47,7 @@ h1, h2, .logo { font-family: 'Italiana', Georgia, serif; font-weight: 400; }
 .icon-btn { width: 44px; padding: 0; display: grid; place-items: center; border-radius: 50%; }
 .mobile-only { display: none; }
 
-.hero { min-height: calc(100svh - 126px); margin: 0 2.2vw 2.2vw; position: relative; display: grid; grid-template-columns: minmax(360px, .8fr) 1.2fr; overflow: hidden; background: var(--powder-light); border-radius: 36px; isolation: isolate; }
+.hero { height: calc(100svh - 126px); min-height: 540px; max-height: 620px; margin: 0 2.2vw 2.2vw; position: relative; display: grid; grid-template-columns: minmax(360px, .8fr) 1.2fr; overflow: hidden; background: var(--powder-light); border-radius: 36px; isolation: isolate; }
 .hero-copy { position: relative; z-index: 5; padding: clamp(65px, 8vw, 125px) 3vw 110px 4.5vw; display: flex; flex-direction: column; justify-content: center; }
 .eyebrow, .section-label, .kicker { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
 .hero h1 { margin: 28px 0 24px; font-size: clamp(72px, 7.6vw, 128px); line-height: .83; letter-spacing: -.05em; }
@@ -76,8 +75,7 @@ h1, h2, .logo { font-family: 'Italiana', Georgia, serif; font-weight: 400; }
 .hero-scroll span { display: block; width: 1px; height: 60px; background: currentColor; }
 
 .marquee { background: var(--cream); border-block: 1px solid var(--line); overflow: hidden; white-space: nowrap; }
-.marquee div { width: max-content; padding: 16px 0; font-size: 11px; letter-spacing: .18em; animation: marquee 25s linear infinite; animation-play-state: paused; }
-.motion-active .marquee div { animation-play-state: running; }
+.marquee div { width: max-content; min-width: 100%; padding: 16px 24px; text-align: center; font-size: 11px; letter-spacing: .18em; }
 .marquee i { margin: 0 26px; font-style: normal; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 
@@ -176,9 +174,10 @@ h1, h2, .logo { font-family: 'Italiana', Georgia, serif; font-weight: 400; }
 .review-person p { display: grid; text-align: left; margin: 0; }
 .review-person small { color: var(--taupe); }
 .review-arrow { width: 46px; height: 46px; border: 1px solid var(--line); border-radius: 50%; background: transparent; cursor: pointer; }
-.review-dots { display: flex; justify-content: center; gap: 8px; margin-top: 25px; }
-.review-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 50%; background: rgba(64,54,47,.25); }
-.review-dots button.active { background: var(--ink); }
+.review-dots { display: flex; justify-content: center; gap: 2px; margin-top: 20px; }
+.review-dots button { width: 28px; height: 28px; padding: 10px; border: 0; border-radius: 50%; background: transparent; cursor: pointer; }
+.review-dots button::before { content: ''; display: block; width: 8px; height: 8px; border-radius: 50%; background: rgba(64,54,47,.25); }
+.review-dots button.active::before { background: var(--ink); }
 
 .faq { padding: 120px 7vw; background: var(--ivory); display: grid; grid-template-columns: .75fr 1.25fr; gap: 8vw; }
 .faq > div:first-child > p { margin-top: 32px; line-height: 1.6; }
@@ -199,11 +198,13 @@ h1, h2, .logo { font-family: 'Italiana', Georgia, serif; font-weight: 400; }
 .newsletter h2 { margin-bottom: 0; }
 .newsletter form label { display: block; margin-bottom: 14px; font-size: 13px; }
 .newsletter form > div { display: flex; border-bottom: 1px solid var(--ink); }
-.newsletter input { width: 100%; height: 55px; padding: 0; border: 0; background: transparent; font-size: 16px; outline: 0; }
+.newsletter input { width: 100%; height: 55px; padding: 0; border: 0; background: transparent; font-size: 16px; }
+.newsletter input:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 .newsletter form button { width: 55px; border: 0; background: transparent; cursor: pointer; }
 .newsletter form small { display: block; margin-top: 14px; color: #61574f; line-height: 1.5; }
 
 footer { padding: 80px 6vw 30px; background: var(--ink); color: var(--cream); }
+footer a:focus-visible { outline-color: var(--cream); }
 .footer-top { display: flex; justify-content: space-between; gap: 70px; }
 .footer-top > div:first-child > p { margin: 25px 0; line-height: 1.7; color: rgba(255,253,247,.65); }
 .footer-top > div:first-child > a { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; }
@@ -268,8 +269,7 @@ footer { padding: 80px 6vw 30px; background: var(--ink); color: var(--cream); }
 .payment-ready > div:not(.payment-icon) { padding: 8px 0; display: flex; justify-content: center; gap: 8px; font-size: 13px; }
 .payment-ready .add-btn { width: 100%; margin: 28px 0 12px; }
 .payment-ready small { color: var(--taupe); }
-.toast { position: fixed; z-index: 120; bottom: 25px; left: 50%; transform: translateX(-50%); padding: 14px 20px; background: var(--ink); color: white; border-radius: 24px; display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.cursor-aura { display: none; }
+.toast { position: fixed; z-index: 120; bottom: 25px; left: 50%; transform: translateX(-50%); padding: 14px 20px; background: var(--ink); color: white; border-radius: 24px; display: flex; align-items: center; gap: 8px; font-size: 12px; pointer-events: none; }
 
 @media (max-width: 900px) {
   .desktop-nav { display: none; }
@@ -281,7 +281,7 @@ footer { padding: 80px 6vw 30px; background: var(--ink); color: var(--cream); }
   .motion-toggle, .bag-button { width: 44px; padding: 0; justify-content: center; }
   .bag-button { position: relative; }
   .bag-button b { position: absolute; right: -4px; top: -3px; }
-  .hero { min-height: 1150px; margin: 0 14px 14px; grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .hero { height: 760px; min-height: 760px; max-height: none; margin: 0 14px 14px; grid-template-columns: 1fr; grid-template-rows: 390px 1fr; }
   .hero-copy { padding: 70px 8vw 35px; }
   .hero h1 { font-size: clamp(72px, 13vw, 104px); }
   .hero-visual { min-height: 560px; }
@@ -318,23 +318,23 @@ footer { padding: 80px 6vw 30px; background: var(--ink); color: var(--cream); }
   .nav { height: 78px; padding: 0 12px; }
   .logo { font-size: 18px; letter-spacing: .035em; white-space: nowrap; }
   .logo span { font-size: 6px; margin-top: 5px; }
-  .hero { min-height: 820px; border-radius: 25px; grid-template-rows: 390px 1fr; }
+  .hero { height: 560px; min-height: 560px; border-radius: 25px; grid-template-rows: 315px 1fr; }
   .hero-copy { padding: 42px 24px 20px; justify-content: flex-start; }
   .eyebrow { font-size: 9px; }
   .hero h1 { margin: 22px 0 16px; font-size: clamp(56px, 17.5vw, 75px); line-height: .86; }
   .hero-copy > p { max-width: 260px; font-size: 14px; line-height: 1.5; }
-  .hero-actions { margin-top: 20px; gap: 15px; }
+  .hero-actions { margin-top: 17px; gap: 10px; flex-wrap: wrap; }
   .primary-btn { min-height: 48px; padding: 0 17px; font-size: 11px; }
   .text-link { font-size: 11px; }
-  .rating { margin-top: 18px; }
-  .hero-visual { min-height: 430px; }
-  .soft-room-sculpture { inset: 43% 0 0; }
+  .rating { display: none; }
+  .hero-visual { min-height: 245px; }
+  .soft-room-sculpture { inset: 49% 0 0; }
   .cushion-one { width: 105vw; height: 58%; top: 10%; }
   .cushion-two { width: 55vw; }
   .cushion-three { display: none; }
-  .soft-room-product .product-visual { width: min(63vw, 290px); height: 350px; border-width: 7px; border-radius: 84px 84px 28px 28px; }
-  .soft-room-product .product-caption { right: 7%; bottom: 6%; font-size: 8px; }
-  .hero-note { left: 22px; bottom: 18px; font-size: 18px; }
+  .soft-room-product .product-visual { width: min(48vw, 210px); height: 220px; border-width: 6px; border-radius: 60px 60px 22px 22px; }
+  .soft-room-product .product-caption { right: 5%; bottom: 5%; font-size: 7px; }
+  .hero-note { left: 18px; bottom: 14px; font-size: 15px; }
   .hero-scroll { display: none; }
   .marquee div { padding: 13px 0; font-size: 9px; }
   .intro { min-height: 760px; padding: 90px 24px; }
@@ -348,7 +348,7 @@ footer { padding: 80px 6vw 30px; background: var(--ink); color: var(--cream); }
   .formula-copy { padding: 75px 24px 90px; }
   .formula h2 { font-size: 16vw; }
   .ingredient-list section h3 { font-size: 20px; }
-  .shop { padding: 90px 14px 100px; }
+  .shop { padding: 54px 14px 90px; }
   .shop > h2 { font-size: 16vw; }
   .shop-grid { border-radius: 22px; }
   .shop-product { min-height: 430px; padding: 25px; }

@@ -8,14 +8,11 @@ import {
   Aperture,
   Leaf,
   Menu,
-  Minus,
   Pause,
   Play,
-  Plus,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
-  Star,
   Truck,
   X,
 } from 'lucide-react'
@@ -222,6 +219,36 @@ function App() {
           <div className="hero-scroll">THE SOFT ROOM <span /></div>
         </section>
 
+        <section className="shop soft-shop" id="shop" data-scene>
+          <div className="shop-cushion" aria-hidden="true" />
+          <div className="section-label centered">03 — CHOOSE YOUR RITUAL</div>
+          <h2>Take softness <em>home.</em></h2>
+          <p className="shop-intro">One for now, one for later, or enough to share.</p>
+          <div className="shop-grid">
+            <div className="shop-product">
+              <ProductVisual variant="shop" alt="Ané Lumière Velvet Dawn Face Cream jar and carton" />
+              <span className="size-note">50 ml · daily face cream</span>
+            </div>
+            <div className="offer-panel">
+              <div className="offer-heading"><div><span>VELVET DAWN FACE CREAM</span><h3>Choose your set</h3></div><div className="offer-stars">★★★★★ <small>286 reviews</small></div></div>
+              <div className="bundle-list">
+                {bundles.map((bundle) => (
+                  <button key={bundle.quantity} className={`bundle ${selected.quantity === bundle.quantity ? 'selected' : ''}`} onClick={() => setSelected(bundle)} aria-pressed={selected.quantity === bundle.quantity} aria-label={`${bundle.quantity} ${bundle.quantity === 1 ? 'jar' : 'jars'}, ${bundle.label}, R${bundle.price}${bundle.saving ? `, ${bundle.saving}` : ''}`}>
+                    {bundle.popular && <b className="popular">MOST LOVED</b>}
+                    <span className="radio"><i /></span>
+                    <span className="bundle-count"><strong>{bundle.quantity}</strong> {bundle.quantity === 1 ? 'BOTTLE' : 'BOTTLES'}</span>
+                    <span className="bundle-copy"><strong>{bundle.label}</strong><small>{bundle.note}</small></span>
+                    <span className="bundle-price"><strong>R{bundle.price}</strong><small>{bundle.saving || 'R299 each'}</small></span>
+                  </button>
+                ))}
+              </div>
+              <button className="add-btn" onClick={addToBag}>Add to bag — R{selected.price} <ShoppingBag size={18} /></button>
+              <div className="purchase-notes"><span id="delivery-note"><Truck size={17} /> Free delivery from R450</span><span><ShieldCheck size={17} /> 30-day glow guarantee</span></div>
+            </div>
+          </div>
+        </section>
+
+
         <section className="marquee" aria-label="Product qualities">
           <div>PLUSH MOISTURE <i>·</i> VELVET FINISH <i>·</i> FRAGRANCE FREE <i>·</i> MADE IN SOUTH AFRICA <i>·</i> A LITTLE ROOM FOR YOURSELF <i>·</i></div>
         </section>
@@ -253,35 +280,6 @@ function App() {
               <div><span>03</span><section><h3>Morning radiance</h3><p>Leaves the complexion looking rested, soft and naturally luminous.</p></section></div>
             </div>
             <div className="formula-proof"><Leaf /><span><b>96% naturally derived</b>Thoughtfully formulated without fragrance, drying alcohol or silicones.</span></div>
-          </div>
-        </section>
-
-        <section className="shop soft-shop" id="shop" data-scene>
-          <div className="shop-cushion" aria-hidden="true" />
-          <div className="section-label centered">03 — CHOOSE YOUR RITUAL</div>
-          <h2>Take softness <em>home.</em></h2>
-          <p className="shop-intro">One for now, one for later, or enough to share.</p>
-          <div className="shop-grid">
-            <div className="shop-product">
-              <ProductVisual variant="shop" alt="Ané Lumière Velvet Dawn Face Cream jar and carton" />
-              <span className="size-note">50 ml · daily face cream</span>
-            </div>
-            <div className="offer-panel">
-              <div className="offer-heading"><div><span>VELVET DAWN FACE CREAM</span><h3>Choose your set</h3></div><div className="offer-stars">★★★★★ <small>286 reviews</small></div></div>
-              <div className="bundle-list">
-                {bundles.map((bundle) => (
-                  <button key={bundle.quantity} className={`bundle ${selected.quantity === bundle.quantity ? 'selected' : ''}`} onClick={() => setSelected(bundle)} aria-pressed={selected.quantity === bundle.quantity} aria-label={`${bundle.quantity} ${bundle.quantity === 1 ? 'jar' : 'jars'}, ${bundle.label}, R${bundle.price}${bundle.saving ? `, ${bundle.saving}` : ''}`}>
-                    {bundle.popular && <b className="popular">MOST LOVED</b>}
-                    <span className="radio"><i /></span>
-                    <span className="bundle-count"><strong>{bundle.quantity}</strong> {bundle.quantity === 1 ? 'BOTTLE' : 'BOTTLES'}</span>
-                    <span className="bundle-copy"><strong>{bundle.label}</strong><small>{bundle.note}</small></span>
-                    <span className="bundle-price"><strong>R{bundle.price}</strong><small>{bundle.saving || 'R299 each'}</small></span>
-                  </button>
-                ))}
-              </div>
-              <button className="add-btn" onClick={addToBag}>Add to bag — R{selected.price} <ShoppingBag size={18} /></button>
-              <div className="purchase-notes"><span id="delivery-note"><Truck size={17} /> Free delivery from R450</span><span><ShieldCheck size={17} /> 30-day glow guarantee</span></div>
-            </div>
           </div>
         </section>
 
@@ -336,7 +334,6 @@ function App() {
       {checkoutOpen && <><div className="overlay checkout-overlay" /><div className="checkout-modal" role="dialog" aria-modal="true" aria-label="Checkout" tabIndex="-1" ref={checkoutRef}><button className="checkout-close icon-btn" onClick={() => setCheckoutOpen(false)} aria-label="Close checkout"><X /></button><div className="checkout-brand"><Logo /><div className="checkout-product"><ProductVisual small variant="thumbnail" /><p><b>{cartItem.label}</b><span>{cartItem.quantity} × Velvet Dawn Face Cream</span></p><strong>R{cartItem.price}</strong></div><div className="checkout-total"><span>Total including delivery</span><b>R{orderTotal}</b></div><small>Payment integration prepared for PayFast.</small></div><div className="checkout-form">{checkoutStep === 1 ? <><span className="step-label">STEP 1 OF 2</span><h2>Where should we send your glow?</h2><form onSubmit={(e) => { e.preventDefault(); setCheckoutStep(2) }}><label>Email address<input type="email" placeholder="you@example.com" required /></label><div className="field-row"><label>First name<input required /></label><label>Last name<input required /></label></div><label>Street address<input placeholder="Street and number" required /></label><div className="field-row"><label>City<input required /></label><label>Postal code<input inputMode="numeric" required /></label></div><button className="add-btn">Continue to payment <ArrowRight size={18} /></button></form></> : <div className="payment-ready"><span className="step-label">STEP 2 OF 2</span><div className="payment-icon"><ShieldCheck /></div><h2>Ready for secure payment</h2><p>This storefront is prepared for PayFast. Connect your merchant credentials before launch to accept live payments.</p><div><Check /> Order details captured</div><div><Check /> Delivery information validated</div><div><Check /> PayFast integration point ready</div><button className="add-btn" onClick={() => setCheckoutOpen(false)}>Return to store</button><small>No payment was taken in this preview.</small></div>}</div></div></>}
 
       {toast && <div className="toast" role="status" aria-live="polite"><Check size={16} /> {toast}</div>}
-      <div className="cursor-aura" aria-hidden="true" />
     </div>
   )
 }

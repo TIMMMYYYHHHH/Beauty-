@@ -133,7 +133,7 @@ describe('Ané Lumière storefront', () => {
     expect(screen.getByText(/newsletter saves one email address only in your browser storage/i)).toBeInTheDocument()
   })
 
-  it('lets visitors pause and resume spectacle motion', async () => {
+  it('lets visitors pause and resume motion effects', async () => {
     const user = userEvent.setup()
     render(<App />)
 

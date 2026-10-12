@@ -21,7 +21,7 @@ const faqs = [
   ['What does the texture feel like?', 'Velvet Dawn has a plush cream texture that spreads easily and settles to a soft finish.'],
   ['How large is the jar?', 'Each Velvet Dawn jar contains 50 ml of face cream.'],
   ['Where do you deliver?', 'We deliver throughout South Africa. Delivery costs R75 for orders below R450 and is complimentary from R450.'],
-  ['What is the return policy?', 'You can return an unopened product within 30 days. Contact our care team before sending a return.'],
+  ['Can I ask about returns?', 'Yes. Contact our care team before ordering or returning a product so we can confirm the current policy and next steps.'],
 ]
 
 function Logo({ onClick, asText = false }) {
@@ -52,6 +52,7 @@ function App() {
   const menuOpenerRef = useRef(null)
   const cartOpenerRef = useRef(null)
   const checkoutOpenerRef = useRef(null)
+  const toastTimerRef = useRef(null)
 
   const deliveryFee = cartItem && cartItem.price < 450 ? 75 : 0
   const orderTotal = (cartItem?.price || 0) + deliveryFee
@@ -66,6 +67,8 @@ function App() {
     document.body.style.overflow = cartOpen || checkoutOpen || menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
   }, [cartOpen, checkoutOpen, menuOpen])
+
+  useEffect(() => () => window.clearTimeout(toastTimerRef.current), [])
 
   useEffect(() => {
     const activeDialog = checkoutOpen ? checkoutRef.current : cartOpen ? cartRef.current : menuOpen ? menuRef.current : null
@@ -132,8 +135,9 @@ function App() {
   }
 
   const showToast = (message) => {
+    window.clearTimeout(toastTimerRef.current)
     setToast(message)
-    window.setTimeout(() => setToast(''), 2400)
+    toastTimerRef.current = window.setTimeout(() => setToast(''), 2400)
   }
 
   const addToBag = (event) => {
@@ -220,7 +224,7 @@ function App() {
             ))}
           </div>
           <div className="purchase-row">
-            <p>{selected.price >= 450 ? 'Complimentary delivery included' : 'R75 delivery · R374 total'}</p>
+            <p>{selected.price >= 450 ? 'Complimentary delivery included' : `R75 delivery · R${selected.price + 75} total`}</p>
             <button className="add-btn" onClick={addToBag}>Add to bag — R{selected.price} <ShoppingBag size={17} /></button>
           </div>
         </section>
@@ -270,8 +274,8 @@ function App() {
       </main>
 
       <footer inert={cartOpen || checkoutOpen || menuOpen ? true : undefined}>
-        <div className="footer-main"><div><Logo /><p>A considered daily cream for a quieter skincare routine.</p></div><div className="footer-links"><section><b>EXPLORE</b><a href="#shop">Shop</a><a href="#story">Our story</a><a href="#texture">Texture & ritual</a></section><section><b>HELP</b><a href="mailto:hello@anelumiere.co.za">Contact</a><a href="#delivery">Delivery & returns</a><a href="#faq">FAQs</a></section></div></div>
-        <div className="footer-policies"><section id="delivery"><b>DELIVERY & RETURNS</b><p>Delivery costs R75 below R450. Orders of R450 or more include complimentary delivery. Return unopened products within 30 days.</p></section><section><b>PREVIEW PRIVACY</b><p>The newsletter saves one email only in your browser storage. No details reach a server.</p></section></div>
+        <div className="footer-main"><div><Logo /><p>A considered daily cream for a quieter skincare routine.</p></div><div className="footer-links"><section><b>EXPLORE</b><a href="#shop">Shop</a><a href="#story">Our story</a><a href="#texture">Texture & ritual</a></section><section><b>HELP</b><a href="mailto:hello@anelumiere.co.za">Contact</a><a href="#delivery">Delivery</a><a href="#faq">FAQs</a></section></div></div>
+        <div className="footer-policies"><section id="delivery"><b>DELIVERY</b><p>Delivery costs R75 below R450. Orders of R450 or more include complimentary delivery. Contact our care team for current return terms.</p></section><section><b>PREVIEW PRIVACY</b><p>The newsletter saves one email only in your browser storage. No details reach a server.</p></section></div>
         <div className="footer-bottom"><span>© 2026 ANÉ LUMIÈRE</span><span>SOUTH AFRICA · ZAR</span></div>
       </footer>
 

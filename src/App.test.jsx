@@ -46,6 +46,15 @@ describe('Ané Lumière storefront', () => {
     expect(within(cart).getAllByText('R499').length).toBeGreaterThan(0)
   })
 
+  it('keeps the three-jar total at R649 with complimentary delivery', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const cart = await addBundle(user, 'Three jars, R649, Save R248')
+    expect(within(cart).getByText('Complimentary delivery included')).toBeInTheDocument()
+    expect(within(cart).getAllByText('R649').length).toBeGreaterThan(0)
+  })
+
   it('removes the cart item and transfers focus to the surviving close control', async () => {
     const user = userEvent.setup()
     render(<App />)

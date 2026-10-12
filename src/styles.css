@@ -65,6 +65,8 @@ em { font-weight: 400; color: var(--clay); }
 
 .product-visual { width: min(78%, 620px); height: 76%; position: relative; z-index: 3; overflow: hidden; box-shadow: 24px 30px 55px rgba(70,45,35,.26); }
 .product-visual img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.product-visual-shop img { object-fit: contain; }
+.product-visual-shop { background: rgba(255,246,220,.3); }
 .product-visual-small { width: 72%; height: 72%; }
 
 .marquee { overflow: hidden; padding: 17px 0; background: var(--ink); color: #ded7cc; white-space: nowrap; }
@@ -466,6 +468,7 @@ body { background: var(--ivory); overflow-x: clip; }
 .ritual-shop .sunburst { background: rgba(255,239,170,.5); box-shadow: 0 0 0 75px rgba(255,218,106,.18), 0 0 0 150px rgba(206,89,57,.12); animation: breathe 4.5s ease-in-out infinite; }
 @keyframes breathe { 50% { transform: scale(1.08); opacity: .72; } }
 .ritual-shop .shop-product .product-visual { border-radius: 48% 52% 43% 57% / 45% 42% 58% 55%; clip-path: inset(0 round 46%); box-shadow: 0 28px 60px rgba(73,28,31,.32); transform: rotate(-2deg) translateY(calc((.5 - var(--scene-progress)) * 35px)); }
+.ritual-shop .shop-product .product-visual-shop { border-radius: 24px; clip-path: none; }
 .ritual-shop .offer-panel { background: rgba(255,250,238,.92); backdrop-filter: blur(20px); }
 .ritual-shop .bundle { background: rgba(255,255,255,.46); border-color: rgba(50,18,47,.18); }
 .ritual-shop .bundle:hover, .ritual-shop .bundle.selected { border-color: var(--coral); background: #fff3d8; box-shadow: inset 4px 0 0 var(--coral), 0 10px 30px rgba(225,95,56,.12); transform: translateX(5px); }
@@ -491,6 +494,8 @@ body { background: var(--ivory); overflow-x: clip; }
 footer { background: var(--night); }
 
 .cursor-aura { display: none; }
+.marquee div, .portal-orbit, .star, .ritual-shop .sunburst { animation-play-state: paused; }
+.motion-active .marquee div, .motion-active .portal-orbit, .motion-active .star, .motion-active .ritual-shop .sunburst { animation-play-state: running; }
 @media (hover: hover) and (pointer: fine) {
   .motion-active .cursor-aura { display: block; position: fixed; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255,196,87,.72); box-shadow: 0 0 22px rgba(255,120,73,.35); z-index: 55; pointer-events: none; transform: translate3d(calc((var(--mx) + .5) * 100vw - 14px), calc((var(--my) + .5) * 100vh - 14px), 0); transition: width .2s, height .2s; mix-blend-mode: screen; }
 }
@@ -518,7 +523,7 @@ footer { background: var(--night); }
 @media (max-width: 600px) {
   .announcement { font-size: 7px; letter-spacing: .12em; }
   .nav-actions { gap: 1px; }
-  .motion-toggle { width: 31px; padding: 0; justify-content: center; }
+  .motion-toggle { width: 44px; min-height: 44px; padding: 0; justify-content: center; }
   .spectacle-hero { min-height: 148svh; }
   .spectacle-hero .hero-copy { min-height: 74svh; padding-top: 5vh; }
   .spectacle-hero h1 { font-size: clamp(60px, 17.8vw, 79px); line-height: .78; margin: 29px 0; }

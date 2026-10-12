@@ -3,52 +3,82 @@ import { useEffect } from 'react'
 export function useSceneMotion(active) {
   useEffect(() => {
     const root = document.documentElement
+    const scenes = [...document.querySelectorAll('[data-scene]')]
     if (!active) {
       root.classList.remove('motion-active')
       root.style.setProperty('--mx', '0')
       root.style.setProperty('--my', '0')
+      scenes.forEach((scene) => scene.style.setProperty('--scene-progress', '.65'))
       return undefined
     }
 
-    root.classList.add('motion-active')
+    const visibleScenes = new Set()
+    const observer = window.IntersectionObserver ? new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.isIntersecting ? visibleScenes.add(entry.target) : visibleScenes.delete(entry.target))
+    }, { rootMargin: '80% 0px' }) : null
+    scenes.forEach((scene) => {
+      scene.style.setProperty('--scene-progress', '.65')
+      if (observer) observer.observe(scene)
+      else visibleScenes.add(scene)
+    })
+
+    if (!document.hidden) root.classList.add('motion-active')
     let frame = 0
     let pointerX = window.innerWidth / 2
     let pointerY = window.innerHeight / 2
+    let pointerDirty = true
+    let scrollDirty = true
 
     const update = () => {
       frame = 0
       const width = Math.max(window.innerWidth, 1)
       const height = Math.max(window.innerHeight, 1)
-      root.style.setProperty('--mx', ((pointerX / width) - 0.5).toFixed(3))
-      root.style.setProperty('--my', ((pointerY / height) - 0.5).toFixed(3))
-      root.style.setProperty('--page-scroll', `${window.scrollY}px`)
-
-      document.querySelectorAll('[data-scene]').forEach((scene) => {
-        const rect = scene.getBoundingClientRect()
-        const progress = (height - rect.top) / (height + rect.height)
-        scene.style.setProperty('--scene-progress', Math.max(0, Math.min(1, progress)).toFixed(3))
-      })
+      if (pointerDirty) {
+        root.style.setProperty('--mx', ((pointerX / width) - 0.5).toFixed(3))
+        root.style.setProperty('--my', ((pointerY / height) - 0.5).toFixed(3))
+        pointerDirty = false
+      }
+      if (scrollDirty) {
+        const measurements = [...visibleScenes].map((scene) => ({ scene, rect: scene.getBoundingClientRect() }))
+        root.style.setProperty('--page-scroll', `${window.scrollY}px`)
+        measurements.forEach(({ scene, rect }) => {
+          const progress = (height - rect.top) / (height + rect.height)
+          scene.style.setProperty('--scene-progress', Math.max(0, Math.min(1, progress)).toFixed(3))
+        })
+        scrollDirty = false
+      }
     }
 
     const requestUpdate = () => {
       if (!frame) frame = window.requestAnimationFrame(update)
     }
+    const onScroll = () => { scrollDirty = true; requestUpdate() }
+    const onResize = () => { scrollDirty = true; pointerDirty = true; requestUpdate() }
     const onPointer = (event) => {
       pointerX = event.clientX
       pointerY = event.clientY
+      pointerDirty = true
       requestUpdate()
     }
+    const onVisibility = () => {
+      root.classList.toggle('motion-active', !document.hidden)
+      if (!document.hidden) { scrollDirty = true; pointerDirty = true; requestUpdate() }
+    }
 
-    window.addEventListener('scroll', requestUpdate, { passive: true })
-    window.addEventListener('resize', requestUpdate)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onResize)
     window.addEventListener('pointermove', onPointer, { passive: true })
+    document.addEventListener('visibilitychange', onVisibility)
     update()
 
     return () => {
       root.classList.remove('motion-active')
-      window.removeEventListener('scroll', requestUpdate)
-      window.removeEventListener('resize', requestUpdate)
+      scenes.forEach((scene) => scene.style.setProperty('--scene-progress', '.65'))
+      observer?.disconnect()
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
       window.removeEventListener('pointermove', onPointer)
+      document.removeEventListener('visibilitychange', onVisibility)
       if (frame) window.cancelAnimationFrame(frame)
     }
   }, [active])

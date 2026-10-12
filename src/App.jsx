@@ -58,10 +58,10 @@ function Logo() {
   return <a className="logo" href="#top" aria-label="Ané Lumière home">ANÉ LUMIÈRE<span>SKIN RITUALS</span></a>
 }
 
-function ProductVisual({ small = false }) {
+function ProductVisual({ small = false, variant = 'scene', alt = '' }) {
   return (
-    <div className={`product-visual ${small ? 'product-visual-small' : ''}`}>
-      <img src="/velvet-dawn-face-cream.jpg" alt="Ané Lumière Velvet Dawn Face Cream with its rose gold packaging" />
+    <div className={`product-visual product-visual-${variant} ${small ? 'product-visual-small' : ''}`}>
+      <img src="/velvet-dawn-face-cream.jpg" alt={alt} />
     </div>
   )
 }
@@ -206,7 +206,7 @@ function App() {
           <div className="hero-visual product-portal">
             <div className="orb orb-one" /><div className="orb orb-two" />
             <span className="vertical-note">FORMULATED IN SOUTH AFRICA</span>
-            <ProductVisual />
+            <ProductVisual variant="hero" alt="Ané Lumière Velvet Dawn Face Cream with its rose gold packaging" />
             <div className="portal-orbit" aria-hidden="true"><span>VELVET DAWN · FACE CREAM · ANÉ LUMIÈRE · </span></div>
             <div className="ingredient-tag tag-one"><span>01</span> Velvet-soft moisture</div>
             <div className="ingredient-tag tag-two"><span>02</span> Luminous finish</div>
@@ -233,7 +233,7 @@ function App() {
           <div className="eclipse-art" aria-hidden="true"><div className="eclipse-ring" /><span>FORMULA</span></div>
           <div className="formula-image">
             <div className="water-ripple ripple-one" /><div className="water-ripple ripple-two" />
-            <ProductVisual small />
+            <ProductVisual small variant="scene" />
             <span className="image-caption">HIGH-PERFORMANCE BOTANICALS<br />MEET SKIN SCIENCE</span>
           </div>
           <div className="formula-copy">
@@ -257,7 +257,7 @@ function App() {
           <div className="shop-grid">
             <div className="shop-product">
               <div className="sunburst" />
-              <ProductVisual />
+              <ProductVisual variant="shop" alt="Ané Lumière Velvet Dawn Face Cream jar and carton" />
               <span className="size-note">50 ml · daily face cream</span>
             </div>
             <div className="offer-panel">
@@ -325,9 +325,9 @@ function App() {
         <div className="footer-bottom"><span>© 2026 ANÉ LUMIÈRE</span><span>MADE WITH INTENTION IN SOUTH AFRICA</span><span>ZA / ZAR</span></div>
       </footer>
 
-      {cartOpen && <><div className="overlay" onClick={() => setCartOpen(false)} /><aside className="cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabIndex="-1" ref={cartRef}><div className="drawer-head"><h2>Your bag <span>{cartItem ? `(${cartItem.quantity})` : '(0)'}</span></h2><button className="icon-btn" onClick={() => setCartOpen(false)} aria-label="Close shopping bag"><X /></button></div>{cartItem ? <><div className="delivery-progress"><p>{deliveryFee === 0 ? <><Check size={14} /> You qualify for <b>complimentary delivery</b></> : <><Truck size={14} /> Add R{450 - cartItem.price} more for <b>complimentary delivery</b></>}</p><span><i style={{ width: `${Math.min((cartItem.price / 450) * 100, 100)}%` }} /></span></div><div className="cart-line"><div className="cart-thumb"><ProductVisual small /></div><div><span>ANÉ LUMIÈRE</span><h3>Velvet Dawn</h3><p>{cartItem.label} · {cartItem.quantity} {cartItem.quantity === 1 ? 'jar' : 'jars'}</p><button onClick={() => setCartItem(null)}>Remove</button></div><strong>R{cartItem.price}</strong></div><div className="cart-summary"><p><span>Subtotal</span><b>R{cartItem.price}</b></p><p><span>Delivery</span><b>{deliveryFee === 0 ? 'Complimentary' : `R${deliveryFee}`}</b></p><div><span>Total</span><strong>R{orderTotal}</strong></div><button className="add-btn" onClick={openCheckout}>Continue to checkout <ArrowRight size={18} /></button><small><ShieldCheck size={14} /> Secure checkout · PayFast ready</small></div></> : <div className="empty-cart"><ShoppingBag size={42} /><h3>Your bag is waiting</h3><p>Choose a ritual set to begin.</p><button className="primary-btn" onClick={() => setCartOpen(false)}>Shop Velvet Dawn</button></div>}</aside></>}
+      {cartOpen && <><div className="overlay" onClick={() => setCartOpen(false)} /><aside className="cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabIndex="-1" ref={cartRef}><div className="drawer-head"><h2>Your bag <span>{cartItem ? `(${cartItem.quantity})` : '(0)'}</span></h2><button className="icon-btn" onClick={() => setCartOpen(false)} aria-label="Close shopping bag"><X /></button></div>{cartItem ? <><div className="delivery-progress"><p>{deliveryFee === 0 ? <><Check size={14} /> You qualify for <b>complimentary delivery</b></> : <><Truck size={14} /> Add R{450 - cartItem.price} more for <b>complimentary delivery</b></>}</p><span><i style={{ width: `${Math.min((cartItem.price / 450) * 100, 100)}%` }} /></span></div><div className="cart-line"><div className="cart-thumb"><ProductVisual small variant="thumbnail" /></div><div><span>ANÉ LUMIÈRE</span><h3>Velvet Dawn</h3><p>{cartItem.label} · {cartItem.quantity} {cartItem.quantity === 1 ? 'jar' : 'jars'}</p><button onClick={() => setCartItem(null)}>Remove</button></div><strong>R{cartItem.price}</strong></div><div className="cart-summary"><p><span>Subtotal</span><b>R{cartItem.price}</b></p><p><span>Delivery</span><b>{deliveryFee === 0 ? 'Complimentary' : `R${deliveryFee}`}</b></p><div><span>Total</span><strong>R{orderTotal}</strong></div><button className="add-btn" onClick={openCheckout}>Continue to checkout <ArrowRight size={18} /></button><small><ShieldCheck size={14} /> Secure checkout · PayFast ready</small></div></> : <div className="empty-cart"><ShoppingBag size={42} /><h3>Your bag is waiting</h3><p>Choose a ritual set to begin.</p><button className="primary-btn" onClick={() => setCartOpen(false)}>Shop Velvet Dawn</button></div>}</aside></>}
 
-      {checkoutOpen && <><div className="overlay checkout-overlay" /><div className="checkout-modal" role="dialog" aria-modal="true" aria-label="Checkout" tabIndex="-1" ref={checkoutRef}><button className="checkout-close icon-btn" onClick={() => setCheckoutOpen(false)} aria-label="Close checkout"><X /></button><div className="checkout-brand"><Logo /><div className="checkout-product"><ProductVisual small /><p><b>{cartItem.label}</b><span>{cartItem.quantity} × Velvet Dawn Face Cream</span></p><strong>R{cartItem.price}</strong></div><div className="checkout-total"><span>Total including delivery</span><b>R{orderTotal}</b></div><small>Payment integration prepared for PayFast.</small></div><div className="checkout-form">{checkoutStep === 1 ? <><span className="step-label">STEP 1 OF 2</span><h2>Where should we send your glow?</h2><form onSubmit={(e) => { e.preventDefault(); setCheckoutStep(2) }}><label>Email address<input type="email" placeholder="you@example.com" required /></label><div className="field-row"><label>First name<input required /></label><label>Last name<input required /></label></div><label>Street address<input placeholder="Street and number" required /></label><div className="field-row"><label>City<input required /></label><label>Postal code<input inputMode="numeric" required /></label></div><button className="add-btn">Continue to payment <ArrowRight size={18} /></button></form></> : <div className="payment-ready"><span className="step-label">STEP 2 OF 2</span><div className="payment-icon"><ShieldCheck /></div><h2>Ready for secure payment</h2><p>This storefront is prepared for PayFast. Connect your merchant credentials before launch to accept live payments.</p><div><Check /> Order details captured</div><div><Check /> Delivery information validated</div><div><Check /> PayFast integration point ready</div><button className="add-btn" onClick={() => setCheckoutOpen(false)}>Return to store</button><small>No payment was taken in this preview.</small></div>}</div></div></>}
+      {checkoutOpen && <><div className="overlay checkout-overlay" /><div className="checkout-modal" role="dialog" aria-modal="true" aria-label="Checkout" tabIndex="-1" ref={checkoutRef}><button className="checkout-close icon-btn" onClick={() => setCheckoutOpen(false)} aria-label="Close checkout"><X /></button><div className="checkout-brand"><Logo /><div className="checkout-product"><ProductVisual small variant="thumbnail" /><p><b>{cartItem.label}</b><span>{cartItem.quantity} × Velvet Dawn Face Cream</span></p><strong>R{cartItem.price}</strong></div><div className="checkout-total"><span>Total including delivery</span><b>R{orderTotal}</b></div><small>Payment integration prepared for PayFast.</small></div><div className="checkout-form">{checkoutStep === 1 ? <><span className="step-label">STEP 1 OF 2</span><h2>Where should we send your glow?</h2><form onSubmit={(e) => { e.preventDefault(); setCheckoutStep(2) }}><label>Email address<input type="email" placeholder="you@example.com" required /></label><div className="field-row"><label>First name<input required /></label><label>Last name<input required /></label></div><label>Street address<input placeholder="Street and number" required /></label><div className="field-row"><label>City<input required /></label><label>Postal code<input inputMode="numeric" required /></label></div><button className="add-btn">Continue to payment <ArrowRight size={18} /></button></form></> : <div className="payment-ready"><span className="step-label">STEP 2 OF 2</span><div className="payment-icon"><ShieldCheck /></div><h2>Ready for secure payment</h2><p>This storefront is prepared for PayFast. Connect your merchant credentials before launch to accept live payments.</p><div><Check /> Order details captured</div><div><Check /> Delivery information validated</div><div><Check /> PayFast integration point ready</div><button className="add-btn" onClick={() => setCheckoutOpen(false)}>Return to store</button><small>No payment was taken in this preview.</small></div>}</div></div></>}
 
       {toast && <div className="toast" role="status" aria-live="polite"><Check size={16} /> {toast}</div>}
       <div className="cursor-aura" aria-hidden="true" />

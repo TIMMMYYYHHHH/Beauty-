@@ -15,7 +15,7 @@ describe('Ané Lumière storefront', () => {
   it('shows the supplied product and bundle choices', () => {
     render(<App />)
 
-    expect(screen.getAllByAltText(/Ané Lumière Velvet Dawn Face Cream/i).length).toBeGreaterThan(0)
+    expect(screen.getAllByAltText(/Ané Lumière Velvet Dawn Face Cream/i)).toHaveLength(2)
     expect(screen.getByRole('button', { name: /1 jar, The Essential, R299/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /2 jars, The Ritual Duo, R499/i })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: /3 jars, The Glow Set, R649/i })).toBeInTheDocument()
@@ -137,6 +137,8 @@ describe('Ané Lumière storefront', () => {
 
     await user.click(screen.getByRole('button', { name: 'Pause motion effects' }))
     expect(screen.getByRole('button', { name: 'Play motion effects' })).toBeInTheDocument()
+    expect(document.documentElement).not.toHaveClass('motion-active')
+    expect(document.querySelector('[data-scene]')).toHaveStyle({ '--scene-progress': '.65' })
     await user.click(screen.getByRole('button', { name: 'Play motion effects' }))
     expect(screen.getByRole('button', { name: 'Pause motion effects' })).toBeInTheDocument()
   })

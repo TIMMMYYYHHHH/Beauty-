@@ -126,6 +126,7 @@ function App() {
 
   const openCart = (event) => {
     cartOpenerRef.current = event?.currentTarget || document.activeElement
+    setToast('')
     setCartOpen(true)
   }
 

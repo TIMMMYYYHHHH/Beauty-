@@ -125,6 +125,19 @@ describe('Ané Lumière storefront', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Email saved on this device')
   })
 
+  it('clears a newsletter toast before opening the shopping bag', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.type(screen.getByLabelText('Save your email for launch updates'), 'ritual@example.com')
+    await user.click(screen.getByRole('button', { name: 'Save email for launch updates' }))
+    expect(screen.getByRole('status')).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Open shopping bag' }))
+    expect(screen.getByRole('dialog', { name: 'Shopping bag' })).toBeInTheDocument()
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
+  })
+
   it('opens and closes FAQ answers with accessible state', async () => {
     const user = userEvent.setup()
     render(<App />)

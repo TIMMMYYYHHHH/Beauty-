@@ -252,6 +252,7 @@ footer a:focus-visible { outline-color: var(--cream); }
   .logo span { margin-top: 5px; font-size: 12px; }
   .hero { margin: 0 10px; }
   .eyebrow { font-size: 12px; }
+  .hero-copy > p { max-width: 140px; }
   .shop { padding: 27px 14px 36px; }
   .shop-heading h2 { font-size: 30px; }
   .shop-heading p { font-size: 12px; }

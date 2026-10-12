@@ -198,59 +198,54 @@ function App() {
       )}
 
       <main inert={cartOpen || checkoutOpen || menuOpen ? true : undefined}>
-        <section className="hero spectacle-hero" data-scene>
-          <div className="hero-atmosphere" aria-hidden="true">
-            <div className="sun-disc"><i /><i /><i /></div>
-            <div className="liquid-horizon"><span /><span /></div>
-            <div className="hero-ghost-word">DAWN</div>
-            <div className="star star-a">✦</div><div className="star star-b">✦</div>
+        <section className="hero soft-room-hero" data-scene>
+          <div className="soft-room-sculpture" aria-hidden="true">
+            <div className="cushion cushion-one" />
+            <div className="cushion cushion-two" />
+            <div className="cushion cushion-three" />
           </div>
           <div className="hero-copy reveal">
-            <div className="eyebrow"><Sparkles size={14} /> The glow begins here</div>
-            <h1><span>Your skin,</span><br /><em><span>beautifully</span><br /><span>awake.</span></em></h1>
-            <p>A plush daily face cream that deeply nourishes, visibly brightens and brings tired skin back to life.</p>
+            <div className="eyebrow">Velvet Dawn · Face cream · 50 ml</div>
+            <h1>A softer<br />state of <em>skin.</em></h1>
+            <p>Plush moisture. A velvet finish. A little room for yourself.</p>
             <div className="hero-actions">
-              <a className="primary-btn" href="#shop">Shop Velvet Dawn <ArrowRight size={17} /></a>
-              <a className="text-link" href="#formula">Discover the formula</a>
+              <a className="primary-btn" href="#shop">Take softness home <ArrowRight size={17} /></a>
+              <a className="text-link" href="#formula">Step inside the formula</a>
             </div>
             <div className="rating"><span>★★★★★</span><b>4.9</b><a href="#reviews">from 286 rituals</a></div>
           </div>
-          <div className="hero-visual product-portal">
-            <div className="orb orb-one" /><div className="orb orb-two" />
-            <span className="vertical-note">FORMULATED IN SOUTH AFRICA</span>
+          <div className="hero-visual soft-room-product">
             <ProductVisual variant="hero" alt="Ané Lumière Velvet Dawn Face Cream with its rose gold packaging" />
-            <div className="portal-orbit" aria-hidden="true"><span>VELVET DAWN · FACE CREAM · ANÉ LUMIÈRE · </span></div>
-            <div className="ingredient-tag tag-one"><span>01</span> Velvet-soft moisture</div>
-            <div className="ingredient-tag tag-two"><span>02</span> Luminous finish</div>
+            <div className="product-caption">YOUR DAILY MOMENT OF SOFTNESS</div>
           </div>
-          <div className="hero-scroll">SCROLL TO DISCOVER <span /></div>
+          <div className="hero-note">Sink into your ritual.</div>
+          <div className="hero-scroll">THE SOFT ROOM <span /></div>
         </section>
 
         <section className="marquee" aria-label="Product qualities">
-          <div>VEGAN <i>✦</i> FRAGRANCE FREE <i>✦</i> CRUELTY FREE <i>✦</i> DERMATOLOGICALLY TESTED <i>✦</i> MADE IN SOUTH AFRICA <i>✦</i></div>
+          <div>PLUSH MOISTURE <i>·</i> VELVET FINISH <i>·</i> FRAGRANCE FREE <i>·</i> MADE IN SOUTH AFRICA <i>·</i> A LITTLE ROOM FOR YOURSELF <i>·</i></div>
         </section>
 
-        <section className="intro liquid-story" id="story" data-scene>
-          <div className="story-art" aria-hidden="true"><div className="story-sun" /><div className="gold-wave wave-a" /><div className="gold-wave wave-b" /></div>
+        <section className="intro soft-story" id="story" data-scene>
+          <div className="story-art" aria-hidden="true"><div className="story-cushion story-cushion-a" /><div className="story-cushion story-cushion-b" /></div>
           <div className="intro-index">01 — THE RITUAL</div>
           <div className="intro-main">
             <p className="kicker">Skincare should feel like a pause,<br />not another task.</p>
-            <h2>Not another cream.<br /><em>A new dawn for skin.</em></h2>
+            <h2>Make a little room<br /><em>for softness.</em></h2>
             <p>We created Velvet Dawn for real skin and unhurried mornings. It melts in effortlessly and leaves your skin looking like its most rested self.</p>
           </div>
-          <div className="intro-mark">É</div>
+          <div className="intro-mark">SOFT</div>
         </section>
 
-        <section className="formula eclipse-formula" id="formula" data-scene>
-          <div className="eclipse-art" aria-hidden="true"><div className="eclipse-ring" /><span>FORMULA</span></div>
+        <section className="formula soft-formula" id="formula" data-scene>
+          <div className="formula-clouds" aria-hidden="true"><i /><i /><i /></div>
           <div className="formula-image">
-            <div className="water-ripple ripple-one" /><div className="water-ripple ripple-two" />
             <ProductVisual small variant="scene" />
-            <span className="image-caption">HIGH-PERFORMANCE BOTANICALS<br />MEET SKIN SCIENCE</span>
+            <span className="image-caption">COMFORTING CARE<br />MEETS A VELVET FINISH</span>
           </div>
           <div className="formula-copy">
             <div className="section-label">02 — INSIDE THE FORMULA</div>
-            <h2>Glow is not subtle.<br /><em>Neither are we.</em></h2>
+            <h2>Soft on skin.<br /><em>Serious about care.</em></h2>
             <p className="formula-lead">Every application wraps skin in lasting moisture, comforting botanicals and a soft, luminous finish.</p>
             <div className="ingredient-list">
               <div><span>01</span><section><h3>Moisture veil</h3><p>Comforts dry skin and helps it feel supple throughout the day.</p></section></div>
@@ -261,14 +256,13 @@ function App() {
           </div>
         </section>
 
-        <section className="shop ritual-shop" id="shop" data-scene>
-          <div className="shop-sunrise" aria-hidden="true"><span /></div>
+        <section className="shop soft-shop" id="shop" data-scene>
+          <div className="shop-cushion" aria-hidden="true" />
           <div className="section-label centered">03 — CHOOSE YOUR RITUAL</div>
-          <h2>More glow. <em>Better value.</em></h2>
+          <h2>Take softness <em>home.</em></h2>
           <p className="shop-intro">One for now, one for later, or enough to share.</p>
           <div className="shop-grid">
             <div className="shop-product">
-              <div className="sunburst" />
               <ProductVisual variant="shop" alt="Ané Lumière Velvet Dawn Face Cream jar and carton" />
               <span className="size-note">50 ml · daily face cream</span>
             </div>
@@ -291,7 +285,7 @@ function App() {
           </div>
         </section>
 
-        <section className="results afterglow-results" data-scene>
+        <section className="results soft-results" data-scene>
           <div className="section-label">04 — VISIBLE RESULTS</div>
           <div className="results-title"><h2>The proof is in<br /><em>your reflection.</em></h2><p>In a four-week consumer study of 42 participants using Velvet Dawn daily.</p></div>
           <div className="stat-grid">

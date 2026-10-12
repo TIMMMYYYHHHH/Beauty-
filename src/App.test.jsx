@@ -19,11 +19,12 @@ describe('Ané Lumière storefront', () => {
   it('shows the real product choices without unverified proof claims', () => {
     render(<App />)
 
-    expect(screen.getByRole('heading', { name: /A softer state of skin/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /A little care\.A softer day\./i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'One jar, R299' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Two jars, R499, Save R99' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Three jars, R649, Save R248' })).toBeInTheDocument()
-    expect(screen.getByText(/Reviews will live here/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Less rush\.More time for you\./i })).toBeInTheDocument()
+    expect(screen.queryByText(/Reviews will live here/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/286 reviews/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/97%/i)).not.toBeInTheDocument()
   })

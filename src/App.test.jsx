@@ -91,6 +91,7 @@ describe('Ané Lumière storefront', () => {
     expect(within(checkout).getByText('Ane Tester')).toBeInTheDocument()
     expect(within(checkout).getByText('12 Dawn Road')).toBeInTheDocument()
     expect(within(checkout).getByText(/No payment was taken/i)).toBeInTheDocument()
+    expect(within(checkout).getByRole('button', { name: 'Return to your bag' })).toBeEnabled()
   })
 
   it('closes only checkout on the first Escape and restores each opener', async () => {

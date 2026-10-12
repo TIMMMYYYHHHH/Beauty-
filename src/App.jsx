@@ -122,7 +122,8 @@ function App() {
     activeDialog.addEventListener('keydown', onKeyDown)
     return () => {
       activeDialog.removeEventListener('keydown', onKeyDown)
-      dialogOpenerRef.current?.focus()
+      const opener = dialogOpenerRef.current
+      window.requestAnimationFrame(() => opener?.focus())
     }
   }, [cartOpen, checkoutOpen, menuOpen])
 

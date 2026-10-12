@@ -65,11 +65,11 @@ describe('Ané Lumière storefront', () => {
     expect(screen.getByText(/Email saved for launch updates on this device/i)).toBeInTheDocument()
   })
 
-  it('traps focus in the bag and restores focus after Escape', async () => {
+  it('traps focus in a populated bag and restores focus after Escape', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    const opener = screen.getByRole('button', { name: 'Open shopping bag' })
+    const opener = screen.getByRole('button', { name: /Add to bag — R499/i })
     await user.click(opener)
     const dialog = screen.getByRole('dialog', { name: 'Shopping bag' })
     expect(dialog).toBeInTheDocument()
@@ -79,7 +79,7 @@ describe('Ané Lumière storefront', () => {
     expect(dialog).toContainElement(document.activeElement)
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('dialog', { name: 'Shopping bag' })).not.toBeInTheDocument()
-    expect(opener).toHaveFocus()
+    await waitFor(() => expect(opener).toHaveFocus())
   })
 
   it('supports complimentary delivery and cart removal', async () => {
@@ -128,7 +128,7 @@ describe('Ané Lumière storefront', () => {
     const menu = screen.getByRole('dialog', { name: 'Navigation menu' })
     expect(menu).toContainElement(document.activeElement)
     await user.keyboard('{Escape}')
-    expect(opener).toHaveFocus()
+    await waitFor(() => expect(opener).toHaveFocus())
     expect(screen.getByText(/Orders of R450 or more include complimentary delivery/i)).toBeInTheDocument()
     expect(screen.getByText(/newsletter saves one email address only in your browser storage/i)).toBeInTheDocument()
   })

@@ -215,7 +215,7 @@ footer a:focus-visible { outline-color: var(--ivory); }
   .mobile-only { display: grid; border: 0; }
   .nav > .mobile-only { justify-self: start; }
   .logo { align-items: center; font-size: 17px; }
-  .logo span { margin-top: 4px; font-size: 8px; letter-spacing: .2em; }
+  .logo span { margin-top: 4px; font-size: 10px; letter-spacing: .18em; }
   .bag-button span { display: none; }
   .hero { min-height: 0; grid-template-columns: 1fr; grid-template-areas: 'image' 'copy'; }
   .hero-image-wrap { min-height: 0; height: 300px; margin: 0 7px; border-radius: 0 0 9px 9px; }
@@ -224,15 +224,15 @@ footer a:focus-visible { outline-color: var(--ivory); }
   .product-visual-floating { width: 67px; height: 62px; }
   .floating-product small { display: none; }
   .floating-product strong { font-size: 18px; }
-  .floating-product em { font-size: 9px; }
+  .floating-product em { font-size: 11px; }
   .hero-copy { padding: 24px 17px 27px; }
-  .eyebrow { font-size: 10px; }
+  .eyebrow, .shop-heading > span, .ritual-copy > span, .faq-heading > span, .newsletter > div > span { font-size: 11px; }
   .hero h1 { margin: 14px 0 12px; font-size: 43px; }
   .hero-copy > p { max-width: 320px; font-size: 13px; line-height: 1.55; }
   .hero-actions { margin-top: 16px; gap: 16px; }
   .hero-actions .primary-btn { min-height: 44px; padding-inline: 18px; }
-  .hero-copy > small { margin-top: 11px; font-size: 10px; }
-  .service-strip { margin: 0 16px; min-height: 55px; grid-template-columns: 1fr 1fr; font-size: 11px; }
+  .hero-copy > small { margin-top: 11px; font-size: 12px; }
+  .service-strip { margin: 0 16px; min-height: 55px; grid-template-columns: 1fr 1fr; font-size: 12px; }
   .service-strip span:nth-child(2) { text-align: right; }
   .service-strip span:last-child { display: none; }
   .shop { padding: 33px 15px 42px; grid-template-columns: 1fr; gap: 19px; }
@@ -246,14 +246,15 @@ footer a:focus-visible { outline-color: var(--ivory); }
   .product-visual-card { width: 92px; height: 93px; border-radius: 7px; }
   .bundle-copy { padding: 8px 7px; justify-content: center; }
   .bundle-copy > strong { font-size: 18px; }
-  .bundle-copy > small { margin-top: 4px; font-size: 11px; }
+  .bundle-copy > small { margin-top: 4px; font-size: 12px; }
   .bundle-price { margin-top: 6px; font-size: 15px; }
-  .bundle-copy > em { margin-top: 5px; font-size: 10px; }
+  .bundle-copy > em { margin-top: 5px; font-size: 12px; }
+  .bundle-price s { font-size: 11px; }
   .saving { display: none; }
   .radio { top: 17px; right: 13px; }
   .purchase-row { margin-top: 12px; display: flex; flex-direction: column-reverse; gap: 9px; }
   .purchase-row .add-btn { min-height: 46px; }
-  .purchase-row p { font-size: 11px; text-align: center; }
+  .purchase-row p { font-size: 12px; text-align: center; }
   .ritual { margin: 0 8px 38px; padding: 7px; grid-template-columns: 1fr; gap: 0; border-radius: 15px; }
   .ritual-photo { min-height: 0; height: 280px; border-radius: 10px; }
   .ritual-photo img { object-position: 49% 48%; }
@@ -268,12 +269,12 @@ footer a:focus-visible { outline-color: var(--ivory); }
   .faq-item > div > p { font-size: 12px; }
   .newsletter { margin: 0 8px 20px; padding: 24px 15px; grid-template-columns: 1fr; gap: 25px; border-radius: 14px; }
   .newsletter h2 { margin: 11px 0 9px; font-size: 30px; }
-  .newsletter > div > p, .newsletter form label { font-size: 11px; }
+  .newsletter > div > p, .newsletter form label, .newsletter small { font-size: 12px; }
   footer { padding: 35px 15px 23px; }
   .footer-main { display: block; }
   .footer-main .logo { align-items: flex-start; font-size: 18px; }
-  .footer-main nav { margin-top: 24px; gap: 22px; font-size: 11px; }
-  .footer-bottom { flex-direction: column; gap: 11px; font-size: 11px; }
+  .footer-main nav { margin-top: 24px; gap: 22px; font-size: 12px; }
+  .footer-bottom { flex-direction: column; gap: 11px; font-size: 12px; }
 }
 
 @media (max-width: 520px) {

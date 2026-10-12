@@ -129,6 +129,18 @@ function App() {
     }
   }, [cartOpen, checkoutOpen, menuOpen])
 
+  useEffect(() => {
+    if (checkoutOpen && checkoutStep === 2) {
+      checkoutRef.current?.querySelector('button')?.focus()
+    }
+  }, [checkoutOpen, checkoutStep])
+
+  useEffect(() => {
+    if (cartOpen && !cartItem) {
+      cartRef.current?.querySelector('button')?.focus()
+    }
+  }, [cartItem, cartOpen])
+
   const showToast = (message) => {
     setToast(message)
     window.setTimeout(() => setToast(''), 2500)

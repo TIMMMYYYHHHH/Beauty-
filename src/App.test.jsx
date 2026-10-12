@@ -50,6 +50,7 @@ describe('Ané Lumière storefront', () => {
 
     expect(screen.getByRole('heading', { name: /Ready for secure payment/i })).toBeInTheDocument()
     expect(screen.getByText(/No payment was taken/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Close checkout' })).toHaveFocus()
   })
 
   it('stores newsletter interest locally and labels preview behavior', async () => {
@@ -91,6 +92,7 @@ describe('Ané Lumière storefront', () => {
     expect(bag).toHaveTextContent('R499')
     await user.click(screen.getByRole('button', { name: 'Remove' }))
     expect(screen.getByRole('heading', { name: /Your bag is waiting/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Close shopping bag' })).toHaveFocus()
   })
 
   it('keeps invalid checkout details on the delivery step', async () => {

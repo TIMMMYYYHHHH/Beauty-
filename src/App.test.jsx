@@ -63,4 +63,21 @@ describe('Ané Lumière storefront', () => {
     expect(window.localStorage.getItem('ane-lumiere-newsletter-email')).toBe('glow@example.com')
     expect(screen.getByText(/Email saved for launch updates on this device/i)).toBeInTheDocument()
   })
+
+  it('traps focus in the bag and restores focus after Escape', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const opener = screen.getByRole('button', { name: 'Open shopping bag' })
+    await user.click(opener)
+    const dialog = screen.getByRole('dialog', { name: 'Shopping bag' })
+    expect(dialog).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Close shopping bag' })).toHaveFocus()
+
+    await user.keyboard('{Shift>}{Tab}{/Shift}')
+    expect(dialog).toContainElement(document.activeElement)
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog', { name: 'Shopping bag' })).not.toBeInTheDocument()
+    expect(opener).toHaveFocus()
+  })
 })

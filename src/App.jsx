@@ -76,6 +76,7 @@ function App() {
   const menuRef = useRef(null)
   const cartRef = useRef(null)
   const checkoutRef = useRef(null)
+  const dialogOpenerRef = useRef(null)
 
   const deliveryFee = cartItem && cartItem.price < 450 ? 75 : 0
   const orderTotal = (cartItem?.price || 0) + deliveryFee
@@ -95,7 +96,10 @@ function App() {
     const activeDialog = checkoutOpen ? checkoutRef.current : cartOpen ? cartRef.current : menuOpen ? menuRef.current : null
     if (!activeDialog) return undefined
 
-    activeDialog.focus()
+    dialogOpenerRef.current = document.activeElement
+    const getFocusable = () => [...activeDialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+    const initialFocusable = getFocusable()
+    ;(initialFocusable[0] || activeDialog).focus()
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
         setCheckoutOpen(false)
@@ -103,15 +107,18 @@ function App() {
         setMenuOpen(false)
       }
       if (event.key !== 'Tab') return
-      const focusable = [...activeDialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])')]
+      const focusable = getFocusable()
       if (!focusable.length) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === activeDialog)) { event.preventDefault(); last.focus() }
       if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
     }
     activeDialog.addEventListener('keydown', onKeyDown)
-    return () => activeDialog.removeEventListener('keydown', onKeyDown)
+    return () => {
+      activeDialog.removeEventListener('keydown', onKeyDown)
+      dialogOpenerRef.current?.focus()
+    }
   }, [cartOpen, checkoutOpen, menuOpen])
 
   const showToast = (message) => {
@@ -141,7 +148,7 @@ function App() {
 
   return (
     <div id="top">
-      <div className="announcement">Complimentary delivery on orders over R450 <ArrowRight size={14} /></div>
+      <div className="announcement">Complimentary delivery on orders of R450 or more <ArrowRight size={14} /></div>
       <header className={scrolled ? 'nav scrolled' : 'nav'}>
         <button className="icon-btn mobile-only" onClick={() => setMenuOpen(true)} aria-label="Open menu"><Menu /></button>
         <Logo />
@@ -245,7 +252,7 @@ function App() {
                 ))}
               </div>
               <button className="add-btn" onClick={addToBag}>Add to bag — R{selected.price} <ShoppingBag size={18} /></button>
-              <div className="purchase-notes"><span id="delivery"><Truck size={17} /> Free delivery over R450</span><span><ShieldCheck size={17} /> 30-day glow guarantee</span></div>
+              <div className="purchase-notes"><span id="delivery-note"><Truck size={17} /> Free delivery from R450</span><span><ShieldCheck size={17} /> 30-day glow guarantee</span></div>
             </div>
           </div>
         </section>
@@ -292,7 +299,8 @@ function App() {
 
       <footer>
         <div className="footer-top"><div><Logo /><p>High-performance skincare for<br />your quietest, brightest self.</p><a href="https://instagram.com" target="_blank" rel="noreferrer"><Aperture size={18} /> @anelumiere</a></div><div className="footer-links"><section><b>EXPLORE</b><a href="#shop">Shop</a><a href="#formula">The formula</a><a href="#story">Our story</a><a href="#reviews">Reviews</a></section><section><b>HELP</b><a href="mailto:hello@anelumiere.co.za">Contact</a><a href="#delivery">Delivery & returns</a><a href="#faq">FAQs</a><a href="#privacy">Privacy</a></section></div></div>
-        <div className="footer-bottom"><span>© 2026 ANÉ LUMIÈRE</span><span>MADE WITH INTENTION IN SOUTH AFRICA</span><span id="privacy">Customer details stay private and secure.</span><span>ZA / ZAR</span></div>
+        <div className="footer-policies"><section id="delivery"><b>DELIVERY & RETURNS</b><p>Delivery costs R75. Orders of R450 or more include complimentary delivery. Return unopened products within 30 days by contacting our care team.</p></section><section id="privacy"><b>PRIVACY IN THIS PREVIEW</b><p>The newsletter saves one email address only in your browser storage. No details reach a server. Clear browser storage to remove the saved email.</p></section></div>
+        <div className="footer-bottom"><span>© 2026 ANÉ LUMIÈRE</span><span>MADE WITH INTENTION IN SOUTH AFRICA</span><span>ZA / ZAR</span></div>
       </footer>
 
       {cartOpen && <><div className="overlay" onClick={() => setCartOpen(false)} /><aside className="cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabIndex="-1" ref={cartRef}><div className="drawer-head"><h2>Your bag <span>{cartItem ? `(${cartItem.quantity})` : '(0)'}</span></h2><button className="icon-btn" onClick={() => setCartOpen(false)} aria-label="Close shopping bag"><X /></button></div>{cartItem ? <><div className="delivery-progress"><p>{deliveryFee === 0 ? <><Check size={14} /> You qualify for <b>complimentary delivery</b></> : <><Truck size={14} /> Add R{450 - cartItem.price} more for <b>complimentary delivery</b></>}</p><span><i style={{ width: `${Math.min((cartItem.price / 450) * 100, 100)}%` }} /></span></div><div className="cart-line"><div className="cart-thumb"><ProductVisual small /></div><div><span>ANÉ LUMIÈRE</span><h3>Velvet Dawn</h3><p>{cartItem.label} · {cartItem.quantity} {cartItem.quantity === 1 ? 'jar' : 'jars'}</p><button onClick={() => setCartItem(null)}>Remove</button></div><strong>R{cartItem.price}</strong></div><div className="cart-summary"><p><span>Subtotal</span><b>R{cartItem.price}</b></p><p><span>Delivery</span><b>{deliveryFee === 0 ? 'Complimentary' : `R${deliveryFee}`}</b></p><div><span>Total</span><strong>R{orderTotal}</strong></div><button className="add-btn" onClick={openCheckout}>Continue to checkout <ArrowRight size={18} /></button><small><ShieldCheck size={14} /> Secure checkout · PayFast ready</small></div></> : <div className="empty-cart"><ShoppingBag size={42} /><h3>Your bag is waiting</h3><p>Choose a ritual set to begin.</p><button className="primary-btn" onClick={() => setCartOpen(false)}>Shop Velvet Dawn</button></div>}</aside></>}

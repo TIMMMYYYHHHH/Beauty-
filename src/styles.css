@@ -199,6 +199,10 @@ footer { padding: 75px 7vw 22px; background: var(--ink); color: #e8e2d8; }
 .footer-links section { display: flex; flex-direction: column; gap: 16px; min-width: 100px; }
 .footer-links b { font-size: 8px; letter-spacing: .2em; margin-bottom: 9px; color: #777970; }
 .footer-links a { font-size: 11px; }
+.footer-policies { display: grid; grid-template-columns: 1fr 1fr; gap: 8vw; padding: 28px 0; border-top: 1px solid rgba(255,255,255,.12); }
+.footer-policies section { scroll-margin-top: 90px; }
+.footer-policies b { font-size: 8px; letter-spacing: .2em; color: #aaa99f; }
+.footer-policies p { max-width: 520px; font-size: 9px; line-height: 1.7; color: #777970; }
 .footer-bottom { border-top: 1px solid rgba(255,255,255,.12); padding-top: 22px; display: flex; justify-content: space-between; color: #6f7169; font-size: 7px; letter-spacing: .17em; }
 
 .overlay { position: fixed; inset: 0; background: rgba(20,20,18,.48); backdrop-filter: blur(3px); z-index: 60; animation: fade .2s; }
@@ -336,6 +340,7 @@ footer { padding: 75px 7vw 22px; background: var(--ink); color: #e8e2d8; }
   .newsletter { padding: 65px 7vw; }
   .footer-top { flex-direction: column; gap: 60px; }
   .footer-links { gap: 50px; }
+  .footer-policies { grid-template-columns: 1fr; gap: 20px; }
   .footer-bottom span:nth-child(2) { display: none; }
   .cart-drawer { padding: 20px; }
   .checkout-modal { display: block; }

@@ -66,20 +66,6 @@ em { font-weight: 400; color: var(--clay); }
 .product-visual { width: min(78%, 620px); height: 76%; position: relative; z-index: 3; overflow: hidden; box-shadow: 24px 30px 55px rgba(70,45,35,.26); }
 .product-visual img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .product-visual-small { width: 72%; height: 72%; }
-/* The original CSS bottle remains as a lightweight fallback for older cached markup. */
-.bottle-wrap { width: 265px; height: 510px; position: relative; z-index: 3; display: flex; align-items: center; flex-direction: column; filter: drop-shadow(20px 26px 24px rgba(70,45,35,.28)); transform: rotate(2deg); }
-.dropper { width: 94px; height: 162px; z-index: 2; }
-.dropper-top { width: 78px; height: 126px; margin: 0 auto; background: linear-gradient(90deg, #282824, #5a584f 52%, #24241f); border-radius: 35px 35px 15px 15px; }
-.dropper-ring { width: 94px; height: 41px; border-radius: 4px; background: repeating-linear-gradient(90deg, #282823 0, #282823 2px, #4b4942 3px, #4b4942 5px); box-shadow: 0 5px 6px rgba(0,0,0,.22); }
-.bottle { margin-top: -5px; width: 210px; height: 332px; border-radius: 23px 23px 35px 35px; background: linear-gradient(90deg, #5a342b, #9a5c49 28%, #a96751 55%, #5b332b); border: 2px solid rgba(255,255,255,.22); box-shadow: inset 8px 0 14px rgba(255,255,255,.08), inset -12px 0 22px rgba(26,10,6,.24); position: relative; display: grid; place-items: center; overflow: hidden; }
-.bottle-shine { position: absolute; left: 18px; top: 24px; width: 20px; height: 240px; border-radius: 50%; background: rgba(255,255,255,.12); filter: blur(6px); }
-.bottle-label { width: 80%; height: 60%; padding: 40px 15px 20px; background: #e9dfd2; text-align: center; display: flex; flex-direction: column; align-items: center; color: #35312b; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
-.bottle-label span { font-family: 'Italiana', serif; font-size: 28px; letter-spacing: .11em; }
-.bottle-label i { font-family: 'Italiana', serif; font-size: 25px; margin: 14px 0 10px; color: var(--clay); }
-.bottle-label small { font-size: 6px; letter-spacing: .35em; }
-.bottle-label b { font-size: 7px; margin-top: auto; font-weight: 400; }
-.bottle-shadow { position: absolute; bottom: 4px; width: 250px; height: 32px; border-radius: 50%; background: rgba(50,28,20,.28); filter: blur(12px); }
-.bottle-small { transform: scale(.72); transform-origin: center; }
 
 .marquee { overflow: hidden; padding: 17px 0; background: var(--ink); color: #ded7cc; white-space: nowrap; }
 .marquee div { font-family: 'Italiana', serif; font-size: 14px; letter-spacing: .2em; word-spacing: .4em; animation: slide 20s linear infinite; }
@@ -280,7 +266,7 @@ footer { padding: 75px 7vw 22px; background: var(--ink); color: #e8e2d8; }
   .desktop-nav { display: none; }
   .nav { padding: 0 20px; }
   .bag-button span { display: none; }
-  .mobile-menu { display: flex; position: fixed; inset: 0; background: var(--cream); z-index: 80; padding: 25px; flex-direction: column; animation: fade .2s; }
+  .mobile-menu { display: flex; position: fixed; inset: 0; background: var(--cream); z-index: 80; padding: 25px; flex-direction: column; animation: fade .2s; overflow-y: auto; }
   .mobile-menu-head { display: flex; justify-content: space-between; align-items: center; }
   .mobile-menu nav { margin: auto 0; display: flex; flex-direction: column; }
   .mobile-menu nav a { font-family: 'Italiana', serif; font-size: 48px; text-transform: capitalize; padding: 11px 0; border-bottom: 1px solid var(--line); }

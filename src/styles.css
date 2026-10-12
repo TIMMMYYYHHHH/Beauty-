@@ -16,7 +16,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; min-width: 320px; background: var(--paper); }
+body { margin: 0; background: var(--paper); }
 button, input { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 a { color: inherit; text-decoration: none; }
@@ -132,7 +132,7 @@ em { font-weight: 400; color: var(--clay); }
 .results { padding: 120px 8vw; background: #23241f; color: #f1ede6; }
 .results .section-label { color: #b7ad9e; }
 .results-title { display: flex; align-items: flex-end; justify-content: space-between; }
-.results-title p { width: 320px; font-size: 11px; line-height: 1.8; color: #aaa99f; margin-bottom: 32px; }
+.results-title p { width: min(320px, 100%); font-size: 11px; line-height: 1.8; color: #aaa99f; margin-bottom: 32px; }
 .results em { color: #c79d8e; }
 .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255,255,255,.2); border-bottom: 1px solid rgba(255,255,255,.2); }
 .stat-grid > div { padding: 52px 5vw 46px 0; border-right: 1px solid rgba(255,255,255,.2); }
@@ -262,7 +262,7 @@ footer { padding: 75px 7vw 22px; background: var(--ink); color: #e8e2d8; }
 .payment-ready > div:not(.payment-icon) { display: flex; gap: 10px; align-items: center; padding: 9px 0; font-size: 10px; text-align: left; }
 .payment-ready > div svg { color: #65725f; width: 15px; }
 .payment-ready small { display: block; margin-top: 13px; color: #777; }
-.toast { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 90; background: var(--ink); color: #fff; padding: 13px 20px; font-size: 10px; letter-spacing: .04em; box-shadow: 0 10px 30px rgba(0,0,0,.22); display: flex; gap: 8px; align-items: center; animation: modal .25s; }
+.toast { position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%); z-index: 50; pointer-events: none; background: var(--ink); color: #fff; padding: 13px 20px; font-size: 10px; letter-spacing: .04em; box-shadow: 0 10px 30px rgba(0,0,0,.22); display: flex; gap: 8px; align-items: center; animation: modal .25s; }
 .mobile-menu { display: none; }
 
 @media (max-width: 900px) {

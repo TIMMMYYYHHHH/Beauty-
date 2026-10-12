@@ -3,64 +3,35 @@ import {
   ArrowRight,
   Check,
   ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  Aperture,
-  Leaf,
   Menu,
-  Pause,
-  Play,
   ShieldCheck,
   ShoppingBag,
-  Sparkles,
   Truck,
   X,
 } from 'lucide-react'
-import { useMotionPreference } from './hooks/useMotionPreference'
-import { useSceneMotion } from './hooks/useSceneMotion'
 
 const bundles = [
-  { quantity: 1, price: 299, label: 'The Essential', note: 'Perfect for your first ritual', saving: '' },
-  { quantity: 2, price: 499, label: 'The Ritual Duo', note: 'Your favourite, never interrupted', saving: 'Save R99', popular: true },
-  { quantity: 3, price: 649, label: 'The Glow Set', note: 'Share one, keep two', saving: 'Save R248' },
-]
-
-const testimonials = [
-  {
-    quote: 'My skin looks rested even when I am not. The texture is beautiful and never sticky.',
-    name: 'Naledi M.',
-    detail: 'Verified buyer · Johannesburg',
-  },
-  {
-    quote: 'I noticed a softer, brighter look in two weeks. It now has a permanent place in my routine.',
-    name: 'Taryn K.',
-    detail: 'Verified buyer · Cape Town',
-  },
-  {
-    quote: 'Simple, luxurious and effective. My skin feels calm from the moment I apply it.',
-    name: 'Ayanda S.',
-    detail: 'Verified buyer · Durban',
-  },
+  { quantity: 1, price: 299, label: 'One jar', note: 'R299 per jar', saving: '' },
+  { quantity: 2, price: 499, label: 'Two jars', note: 'R249.50 per jar', saving: 'Save R99' },
+  { quantity: 3, price: 649, label: 'Three jars', note: 'R216.33 per jar', saving: 'Save R248' },
 ]
 
 const faqs = [
-  ['How do I use Velvet Dawn?', 'Massage a small amount into clean skin each morning. Follow with SPF, or use it as the final step in your evening ritual.'],
-  ['Is it suitable for sensitive skin?', 'Yes. The fragrance-free formula uses calming ingredients and suits all skin types. Always patch test a new skincare product first.'],
-  ['When will I see results?', 'Skin feels hydrated after the first use. Most customers report a more even, luminous look after two to four weeks of consistent use.'],
-  ['How long does one jar last?', 'One 50 ml jar lasts approximately six to eight weeks with daily use.'],
-  ['Where do you deliver?', 'We deliver throughout South Africa. Standard delivery is free for orders over R450.'],
+  ['How do I use Velvet Dawn?', 'Massage a small amount into clean skin. Use it in the morning before SPF or as the final step in your evening routine.'],
+  ['What does the texture feel like?', 'Velvet Dawn has a plush cream texture that spreads easily and settles to a soft finish.'],
+  ['How large is the jar?', 'Each Velvet Dawn jar contains 50 ml of face cream.'],
+  ['Where do you deliver?', 'We deliver throughout South Africa. Delivery costs R75 for orders below R450 and is complimentary from R450.'],
+  ['What is the return policy?', 'You can return an unopened product within 30 days. Contact our care team before sending a return.'],
 ]
 
-function Logo() {
-  return <a className="logo" href="#top" aria-label="Ané Lumière home">ANÉ LUMIÈRE<span>SKIN RITUALS</span></a>
+function Logo({ onClick, asText = false }) {
+  const content = <>ANÉ LUMIÈRE<span>SKIN RITUALS</span></>
+  if (asText) return <div className="logo logo-static" aria-label="Ané Lumière">{content}</div>
+  return <a className="logo" href="#top" onClick={onClick} aria-label="Ané Lumière home">{content}</a>
 }
 
-function ProductVisual({ small = false, variant = 'scene', alt = '' }) {
-  return (
-    <div className={`product-visual product-visual-${variant} ${small ? 'product-visual-small' : ''}`}>
-      <img src="/velvet-dawn-face-cream.jpg" alt={alt} />
-    </div>
-  )
+function ProductVisual({ variant = 'default', alt = '' }) {
+  return <div className={`product-visual product-visual-${variant}`}><img src="/velvet-dawn-face-cream.jpg" alt={alt} /></div>
 }
 
 function App() {
@@ -70,24 +41,24 @@ function App() {
   const [cartItem, setCartItem] = useState(null)
   const [checkoutOpen, setCheckoutOpen] = useState(false)
   const [checkoutStep, setCheckoutStep] = useState(1)
-  const [activeReview, setActiveReview] = useState(0)
+  const [deliveryDetails, setDeliveryDetails] = useState(null)
   const [openFaq, setOpenFaq] = useState(0)
   const [toast, setToast] = useState('')
   const [scrolled, setScrolled] = useState(false)
+
   const menuRef = useRef(null)
   const cartRef = useRef(null)
   const checkoutRef = useRef(null)
-  const dialogOpenerRef = useRef(null)
-  const preferredDialogOpenerRef = useRef(null)
-  const { motionActive, paused, systemReduced, toggleMotion } = useMotionPreference()
+  const menuOpenerRef = useRef(null)
+  const cartOpenerRef = useRef(null)
+  const checkoutOpenerRef = useRef(null)
 
   const deliveryFee = cartItem && cartItem.price < 450 ? 75 : 0
   const orderTotal = (cartItem?.price || 0) + deliveryFee
-  useSceneMotion(motionActive && !cartOpen && !checkoutOpen && !menuOpen)
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30)
-    window.addEventListener('scroll', onScroll)
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -100,241 +71,215 @@ function App() {
     const activeDialog = checkoutOpen ? checkoutRef.current : cartOpen ? cartRef.current : menuOpen ? menuRef.current : null
     if (!activeDialog) return undefined
 
-    dialogOpenerRef.current = preferredDialogOpenerRef.current || document.activeElement
-    preferredDialogOpenerRef.current = null
     const getFocusable = () => [...activeDialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])')]
     const initialFocusable = getFocusable()
     ;(initialFocusable[0] || activeDialog).focus()
+
     const onKeyDown = (event) => {
       if (event.key === 'Escape') {
-        setCheckoutOpen(false)
-        setCartOpen(false)
-        setMenuOpen(false)
+        event.preventDefault()
+        if (checkoutOpen) closeCheckout()
+        else if (cartOpen) closeCart()
+        else closeMenu()
+        return
       }
       if (event.key !== 'Tab') return
       const focusable = getFocusable()
       if (!focusable.length) return
       const first = focusable[0]
       const last = focusable[focusable.length - 1]
-      if (event.shiftKey && (document.activeElement === first || document.activeElement === activeDialog)) { event.preventDefault(); last.focus() }
-      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === activeDialog)) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
     }
+
     activeDialog.addEventListener('keydown', onKeyDown)
-    return () => {
-      activeDialog.removeEventListener('keydown', onKeyDown)
-      const opener = dialogOpenerRef.current
-      window.requestAnimationFrame(() => opener?.focus())
-    }
+    return () => activeDialog.removeEventListener('keydown', onKeyDown)
   }, [cartOpen, checkoutOpen, menuOpen])
 
   useEffect(() => {
-    if (checkoutOpen && checkoutStep === 2) {
-      checkoutRef.current?.querySelector('button')?.focus()
-    }
+    if (checkoutOpen && checkoutStep === 2) checkoutRef.current?.querySelector('.checkout-close')?.focus()
   }, [checkoutOpen, checkoutStep])
 
   useEffect(() => {
-    if (cartOpen && !cartItem) {
-      cartRef.current?.querySelector('button')?.focus()
-    }
+    if (cartOpen && !cartItem) cartRef.current?.querySelector('.drawer-close')?.focus()
   }, [cartItem, cartOpen])
+
+  const restoreFocus = (ref) => window.requestAnimationFrame(() => ref.current?.focus())
+
+  const openMenu = (event) => {
+    menuOpenerRef.current = event.currentTarget
+    setMenuOpen(true)
+  }
+
+  const closeMenu = () => {
+    setMenuOpen(false)
+    restoreFocus(menuOpenerRef)
+  }
+
+  const openCart = (event) => {
+    cartOpenerRef.current = event?.currentTarget || document.activeElement
+    setCartOpen(true)
+  }
+
+  const closeCart = () => {
+    setCartOpen(false)
+    restoreFocus(cartOpenerRef)
+  }
 
   const showToast = (message) => {
     setToast(message)
-    window.setTimeout(() => setToast(''), 2500)
+    window.setTimeout(() => setToast(''), 2400)
   }
 
-  const addToBag = () => {
+  const addToBag = (event) => {
+    cartOpenerRef.current = event.currentTarget
     setCartItem(selected)
     setCartOpen(true)
-    showToast(`${selected.label} added to your bag`)
+    setToast('')
   }
 
-  const openCheckout = () => {
-    preferredDialogOpenerRef.current = document.querySelector('[aria-label="Open shopping bag"]')
-    setCartOpen(false)
+  const openCheckout = (event) => {
+    checkoutOpenerRef.current = event.currentTarget
     setCheckoutStep(1)
+    setDeliveryDetails(null)
     setCheckoutOpen(true)
+  }
+
+  const closeCheckout = () => {
+    setCheckoutOpen(false)
+    restoreFocus(checkoutOpenerRef)
+  }
+
+  const submitDelivery = (event) => {
+    event.preventDefault()
+    setDeliveryDetails(Object.fromEntries(new FormData(event.currentTarget)))
+    setCheckoutStep(2)
   }
 
   const subscribe = (event) => {
     event.preventDefault()
     const email = new FormData(event.currentTarget).get('email')
     window.localStorage.setItem('ane-lumiere-newsletter-email', email)
-    showToast('Email saved for launch updates on this device')
+    showToast('Email saved on this device')
     event.currentTarget.reset()
   }
 
   return (
     <div id="top">
-      <div className="announcement">Complimentary delivery on orders of R450 or more <ArrowRight size={14} /></div>
+      <div className="announcement">Complimentary delivery from R450 <ArrowRight size={13} /></div>
       <header className={scrolled ? 'nav scrolled' : 'nav'} inert={cartOpen || checkoutOpen || menuOpen ? true : undefined}>
-        <button className="icon-btn mobile-only" onClick={() => setMenuOpen(true)} aria-label="Open menu"><Menu /></button>
+        <button className="icon-btn mobile-only" onClick={openMenu} aria-label="Open menu"><Menu /></button>
         <Logo />
         <nav className="desktop-nav" aria-label="Main navigation">
           <a href="#shop">Shop</a>
           <a href="#story">Our story</a>
-          <a href="#formula">The formula</a>
-          <a href="#reviews">Reviews</a>
+          <a href="#texture">Texture & ritual</a>
+          <a href="#faq">FAQs</a>
         </nav>
-        <div className="nav-actions">
-          <button className="motion-toggle" onClick={toggleMotion} disabled={systemReduced} aria-label={paused ? 'Play motion effects' : 'Pause motion effects'}>{paused ? <Play size={14} /> : <Pause size={14} />}<span>{paused ? 'Play' : 'Pause'}</span></button>
-          <button className="bag-button" onClick={() => setCartOpen(true)} aria-label="Open shopping bag">
-            <ShoppingBag size={20} /><span>Bag</span><b>{cartItem ? cartItem.quantity : 0}</b>
-          </button>
-        </div>
+        <button className="bag-button" onClick={openCart} aria-label="Open shopping bag">
+          <ShoppingBag size={19} /><span>Bag</span><b>{cartItem ? cartItem.quantity : 0}</b>
+        </button>
       </header>
 
       {menuOpen && (
         <div className="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation menu" tabIndex="-1" ref={menuRef}>
-          <div className="mobile-menu-head"><Logo /><button className="icon-btn" onClick={() => setMenuOpen(false)} aria-label="Close menu"><X /></button></div>
-          <nav>
-            {['shop', 'story', 'formula', 'reviews'].map((item) => <a key={item} href={`#${item}`} onClick={() => setMenuOpen(false)}>{item === 'story' ? 'Our story' : item}</a>)}
-          </nav>
-          <p>Made slowly. Used daily. Loved deeply.</p>
+          <div className="mobile-menu-head"><Logo onClick={closeMenu} /><button className="icon-btn" onClick={closeMenu} aria-label="Close menu"><X /></button></div>
+          <nav>{[['shop', 'Shop'], ['story', 'Our story'], ['texture', 'Texture & ritual'], ['faq', 'FAQs']].map(([id, label]) => <a key={id} href={`#${id}`} onClick={closeMenu}>{label}</a>)}</nav>
+          <p>One thoughtful cream. One quieter routine.</p>
         </div>
       )}
 
       <main inert={cartOpen || checkoutOpen || menuOpen ? true : undefined}>
-        <section className="hero soft-room-hero" data-scene>
-          <div className="soft-room-sculpture" aria-hidden="true">
-            <div className="cushion cushion-one" />
-            <div className="cushion cushion-two" />
-            <div className="cushion cushion-three" />
-          </div>
-          <div className="hero-copy reveal">
+        <section className="hero">
+          <div className="hero-copy">
             <div className="eyebrow">Velvet Dawn · Face cream · 50 ml</div>
-            <h1>A softer<br />state of <em>skin.</em></h1>
-            <p>Plush moisture. A velvet finish. A little room for yourself.</p>
-            <div className="hero-actions">
-              <a className="primary-btn" href="#shop">Take softness home <ArrowRight size={17} /></a>
-              <a className="text-link" href="#formula">Step inside the formula</a>
-            </div>
-            <div className="rating"><span>★★★★★</span><b>4.9</b><a href="#reviews">from 286 rituals</a></div>
+            <h1>A softer state <em>of skin.</em></h1>
+            <p>A plush daily face cream with a velvet finish, made for an unhurried moment in your routine.</p>
+            <a className="hero-link" href="#shop">Choose your set <ArrowRight size={17} /></a>
           </div>
-          <div className="hero-visual soft-room-product">
-            <ProductVisual variant="hero" alt="Ané Lumière Velvet Dawn Face Cream with its rose gold packaging" />
-            <div className="product-caption">YOUR DAILY MOMENT OF SOFTNESS</div>
-          </div>
-          <div className="hero-note">Sink into your ritual.</div>
-          <div className="hero-scroll">THE SOFT ROOM <span /></div>
+          <div className="hero-relief" aria-hidden="true" />
+          <ProductVisual variant="hero" alt="Ané Lumière Velvet Dawn Face Cream jar and carton" />
+          <span className="room-caption">THE SOFT ROOM · ANÉ LUMIÈRE</span>
         </section>
 
-        <section className="shop soft-shop" id="shop" data-scene>
-          <div className="shop-cushion" aria-hidden="true" />
-          <div className="section-label centered">03 — CHOOSE YOUR RITUAL</div>
-          <h2>Take softness <em>home.</em></h2>
-          <p className="shop-intro">One for now, one for later, or enough to share.</p>
-          <div className="shop-grid">
-            <div className="shop-product">
-              <ProductVisual variant="shop" alt="Ané Lumière Velvet Dawn Face Cream jar and carton" />
-              <span className="size-note">50 ml · daily face cream</span>
-            </div>
-            <div className="offer-panel">
-              <div className="offer-heading"><div><span>VELVET DAWN FACE CREAM</span><h3>Choose your set</h3></div><div className="offer-stars">★★★★★ <small>286 reviews</small></div></div>
-              <div className="bundle-list">
-                {bundles.map((bundle) => (
-                  <button key={bundle.quantity} className={`bundle ${selected.quantity === bundle.quantity ? 'selected' : ''}`} onClick={() => setSelected(bundle)} aria-pressed={selected.quantity === bundle.quantity} aria-label={`${bundle.quantity} ${bundle.quantity === 1 ? 'jar' : 'jars'}, ${bundle.label}, R${bundle.price}${bundle.saving ? `, ${bundle.saving}` : ''}`}>
-                    {bundle.popular && <b className="popular">MOST LOVED</b>}
-                    <span className="radio"><i /></span>
-                    <span className="bundle-count"><strong>{bundle.quantity}</strong> {bundle.quantity === 1 ? 'BOTTLE' : 'BOTTLES'}</span>
-                    <span className="bundle-copy"><strong>{bundle.label}</strong><small>{bundle.note}</small></span>
-                    <span className="bundle-price"><strong>R{bundle.price}</strong><small>{bundle.saving || 'R299 each'}</small></span>
-                  </button>
-                ))}
-              </div>
-              <button className="add-btn" onClick={addToBag}>Add to bag — R{selected.price} <ShoppingBag size={18} /></button>
-              <div className="purchase-notes"><span id="delivery-note"><Truck size={17} /> Free delivery from R450</span><span><ShieldCheck size={17} /> 30-day glow guarantee</span></div>
-            </div>
+        <section className="shop" id="shop" aria-labelledby="shop-heading">
+          <div className="shop-heading"><div><span>VELVET DAWN FACE CREAM</span><h2 id="shop-heading">Choose your set</h2></div><p>50 ml per jar</p></div>
+          <div className="bundle-list">
+            {bundles.map((bundle) => (
+              <button key={bundle.quantity} className={`bundle ${selected.quantity === bundle.quantity ? 'selected' : ''}`} onClick={() => setSelected(bundle)} aria-pressed={selected.quantity === bundle.quantity} aria-label={`${bundle.label}, R${bundle.price}${bundle.saving ? `, ${bundle.saving}` : ''}`}>
+                <span className="radio" aria-hidden="true"><i /></span>
+                <span className="bundle-quantity"><strong>{bundle.quantity}</strong><small>{bundle.quantity === 1 ? 'JAR' : 'JARS'}</small></span>
+                <span className="bundle-name"><strong>{bundle.label}</strong><small>{bundle.note}</small></span>
+                <span className="bundle-price"><strong>R{bundle.price}</strong><small>{bundle.saving || 'No bundle saving'}</small></span>
+              </button>
+            ))}
+          </div>
+          <div className="purchase-row">
+            <p>{selected.price >= 450 ? 'Complimentary delivery included' : 'R75 delivery · R374 total'}</p>
+            <button className="add-btn" onClick={addToBag}>Add to bag — R{selected.price} <ShoppingBag size={17} /></button>
           </div>
         </section>
 
-
-        <section className="marquee" aria-label="Product qualities">
-          <div>PLUSH MOISTURE <i>·</i> VELVET FINISH <i>·</i> FRAGRANCE FREE <i>·</i> MADE IN SOUTH AFRICA <i>·</i> A LITTLE ROOM FOR YOURSELF <i>·</i></div>
+        <section className="story" id="story">
+          <div className="story-intro">
+            <span>OUR STORY</span>
+            <h2>Skincare can be<br /><em>a quieter thing.</em></h2>
+            <p>Velvet Dawn began with a simple idea: make one daily cream feel considered, comforting and easy to return to.</p>
+          </div>
+          <aside className="story-note"><span>THE SOFT ROOM</span><p>A small pause between cleansing and the rest of your day.</p></aside>
         </section>
 
-        <section className="intro soft-story" id="story" data-scene>
-          <div className="story-art" aria-hidden="true"><div className="story-cushion story-cushion-a" /><div className="story-cushion story-cushion-b" /></div>
-          <div className="intro-index">01 — THE RITUAL</div>
-          <div className="intro-main">
-            <p className="kicker">Skincare should feel like a pause,<br />not another task.</p>
-            <h2>Make a little room<br /><em>for softness.</em></h2>
-            <p>We created Velvet Dawn for real skin and unhurried mornings. It melts in effortlessly and leaves your skin looking like its most rested self.</p>
+        <section className="texture" id="texture">
+          <div className="texture-copy">
+            <span>TEXTURE & RITUAL</span>
+            <h2>Plush at first touch.<br /><em>Soft after.</em></h2>
+            <p>Warm a small amount between your fingertips, then press it into clean skin. The cream spreads easily and settles to a smooth finish.</p>
           </div>
-          <div className="intro-mark">SOFT</div>
-        </section>
-
-        <section className="formula soft-formula" id="formula" data-scene>
-          <div className="formula-clouds" aria-hidden="true"><i /><i /><i /></div>
-          <div className="formula-image">
-            <ProductVisual small variant="scene" />
-            <span className="image-caption">COMFORTING CARE<br />MEETS A VELVET FINISH</span>
-          </div>
-          <div className="formula-copy">
-            <div className="section-label">02 — INSIDE THE FORMULA</div>
-            <h2>Soft on skin.<br /><em>Serious about care.</em></h2>
-            <p className="formula-lead">Every application wraps skin in lasting moisture, comforting botanicals and a soft, luminous finish.</p>
-            <div className="ingredient-list">
-              <div><span>01</span><section><h3>Moisture veil</h3><p>Comforts dry skin and helps it feel supple throughout the day.</p></section></div>
-              <div><span>02</span><section><h3>Velvet finish</h3><p>Melts into skin without a heavy or greasy after-feel.</p></section></div>
-              <div><span>03</span><section><h3>Morning radiance</h3><p>Leaves the complexion looking rested, soft and naturally luminous.</p></section></div>
-            </div>
-            <div className="formula-proof"><Leaf /><span><b>96% naturally derived</b>Thoughtfully formulated without fragrance, drying alcohol or silicones.</span></div>
-          </div>
-        </section>
-
-        <section className="results soft-results" data-scene>
-          <div className="section-label">04 — VISIBLE RESULTS</div>
-          <div className="results-title"><h2>The proof is in<br /><em>your reflection.</em></h2><p>In a four-week consumer study of 42 participants using Velvet Dawn daily.</p></div>
-          <div className="stat-grid">
-            <div><strong>97<span>%</span></strong><p>said skin felt instantly hydrated</p></div>
-            <div><strong>92<span>%</span></strong><p>saw a visibly brighter complexion</p></div>
-            <div><strong>89<span>%</span></strong><p>noticed smoother-looking texture</p></div>
-          </div>
-          <p className="study-note">*Self-assessment results. Individual results may vary.</p>
+          <ol className="ritual-list">
+            <li><span>01</span><div><b>Begin clean</b><p>Use after cleansing and any water-based steps.</p></div></li>
+            <li><span>02</span><div><b>Take a small amount</b><p>Warm the cream gently between your fingertips.</p></div></li>
+            <li><span>03</span><div><b>Press, then smooth</b><p>Finish with SPF during the day.</p></div></li>
+          </ol>
         </section>
 
         <section className="reviews" id="reviews">
-          <div className="review-header"><div><div className="section-label">05 — SKIN STORIES</div><h2>Rituals, <em>shared.</em></h2></div><div className="review-score"><strong>4.9</strong><span>★★★★★<small>Based on 286 reviews</small></span></div></div>
-          <div className="review-stage">
-            <button className="review-arrow" onClick={() => setActiveReview((activeReview + testimonials.length - 1) % testimonials.length)} aria-label="Previous review"><ChevronLeft /></button>
-            <article key={activeReview}>
-              <Sparkles size={24} />
-              <blockquote>“{testimonials[activeReview].quote}”</blockquote>
-              <div className="review-person"><span>{testimonials[activeReview].name.charAt(0)}</span><p><b>{testimonials[activeReview].name}</b><small>{testimonials[activeReview].detail}</small></p></div>
-            </article>
-            <button className="review-arrow" onClick={() => setActiveReview((activeReview + 1) % testimonials.length)} aria-label="Next review"><ChevronRight /></button>
-          </div>
-          <div className="review-dots">{testimonials.map((_, i) => <button key={i} className={i === activeReview ? 'active' : ''} onClick={() => setActiveReview(i)} aria-label={`Show review ${i + 1}`} />)}</div>
+          <span>CUSTOMER NOTES</span>
+          <div><h2>Reviews will live here.</h2><p>We will publish customer feedback when verified reviews are available. We will not fill this space with invented testimonials.</p></div>
         </section>
 
         <section className="faq" id="faq">
-          <div><div className="section-label">06 — GOOD TO KNOW</div><h2>Questions,<br /><em>answered.</em></h2><p>Still curious? Write to <a href="mailto:hello@anelumiere.co.za">hello@anelumiere.co.za</a></p></div>
+          <div className="faq-heading"><span>GOOD TO KNOW</span><h2>Questions,<br /><em>answered.</em></h2><p>Need more help? <a href="mailto:hello@anelumiere.co.za">Email our care team.</a></p></div>
           <div className="faq-list">
-            {faqs.map(([q, a], i) => <div className={`faq-item ${openFaq === i ? 'open' : ''}`} key={q}><button onClick={() => setOpenFaq(openFaq === i ? -1 : i)} aria-expanded={openFaq === i} aria-controls={`faq-answer-${i}`}><span>{String(i + 1).padStart(2, '0')}</span>{q}<ChevronDown /></button><div id={`faq-answer-${i}`} aria-hidden={openFaq !== i}><p>{a}</p></div></div>)}
+            {faqs.map(([question, answer], index) => <div className={`faq-item ${openFaq === index ? 'open' : ''}`} key={question}><button onClick={() => setOpenFaq(openFaq === index ? -1 : index)} aria-expanded={openFaq === index} aria-controls={`faq-answer-${index}`}>{question}<ChevronDown /></button><div id={`faq-answer-${index}`} aria-hidden={openFaq !== index}><p>{answer}</p></div></div>)}
           </div>
         </section>
 
         <section className="newsletter">
-          <div><span>THE LUMIÈRE LETTER</span><h2>A slower kind of beauty,<br /><em>delivered.</em></h2></div>
+          <div><span>THE LUMIÈRE LETTER</span><h2>Notes for a slower routine.</h2></div>
           <form onSubmit={subscribe}>
-            <label htmlFor="email">Enjoy 10% off your first ritual</label><div><input id="email" name="email" type="email" placeholder="Your email address" required /><button aria-label="Save email for launch updates"><ArrowRight /></button></div><small>Preview mode saves your email on this device. Connect an email provider before launch.</small>
+            <label htmlFor="email">Save your email for launch updates</label>
+            <div><input id="email" name="email" type="email" placeholder="Your email address" required /><button aria-label="Save email for launch updates"><ArrowRight /></button></div>
+            <small>This preview stores the email only on this device. No subscription is sent.</small>
           </form>
         </section>
       </main>
 
       <footer inert={cartOpen || checkoutOpen || menuOpen ? true : undefined}>
-        <div className="footer-top"><div><Logo /><p>High-performance skincare for<br />your quietest, brightest self.</p><a href="https://instagram.com" target="_blank" rel="noreferrer"><Aperture size={18} /> @anelumiere</a></div><div className="footer-links"><section><b>EXPLORE</b><a href="#shop">Shop</a><a href="#formula">The formula</a><a href="#story">Our story</a><a href="#reviews">Reviews</a></section><section><b>HELP</b><a href="mailto:hello@anelumiere.co.za">Contact</a><a href="#delivery">Delivery & returns</a><a href="#faq">FAQs</a><a href="#privacy">Privacy</a></section></div></div>
-        <div className="footer-policies"><section id="delivery"><b>DELIVERY & RETURNS</b><p>Delivery costs R75. Orders of R450 or more include complimentary delivery. Return unopened products within 30 days by contacting our care team.</p></section><section id="privacy"><b>PRIVACY IN THIS PREVIEW</b><p>The newsletter saves one email address only in your browser storage. No details reach a server. Clear browser storage to remove the saved email.</p></section></div>
-        <div className="footer-bottom"><span>© 2026 ANÉ LUMIÈRE</span><span>MADE WITH INTENTION IN SOUTH AFRICA</span><span>ZA / ZAR</span></div>
+        <div className="footer-main"><div><Logo /><p>A considered daily cream for a quieter skincare routine.</p></div><div className="footer-links"><section><b>EXPLORE</b><a href="#shop">Shop</a><a href="#story">Our story</a><a href="#texture">Texture & ritual</a></section><section><b>HELP</b><a href="mailto:hello@anelumiere.co.za">Contact</a><a href="#delivery">Delivery & returns</a><a href="#faq">FAQs</a></section></div></div>
+        <div className="footer-policies"><section id="delivery"><b>DELIVERY & RETURNS</b><p>Delivery costs R75 below R450. Orders of R450 or more include complimentary delivery. Return unopened products within 30 days.</p></section><section><b>PREVIEW PRIVACY</b><p>The newsletter saves one email only in your browser storage. No details reach a server.</p></section></div>
+        <div className="footer-bottom"><span>© 2026 ANÉ LUMIÈRE</span><span>SOUTH AFRICA · ZAR</span></div>
       </footer>
 
-      {cartOpen && <><div className="overlay" onClick={() => setCartOpen(false)} /><aside className="cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping bag" tabIndex="-1" ref={cartRef}><div className="drawer-head"><h2>Your bag <span>{cartItem ? `(${cartItem.quantity})` : '(0)'}</span></h2><button className="icon-btn" onClick={() => setCartOpen(false)} aria-label="Close shopping bag"><X /></button></div>{cartItem ? <><div className="delivery-progress"><p>{deliveryFee === 0 ? <><Check size={14} /> You qualify for <b>complimentary delivery</b></> : <><Truck size={14} /> Add R{450 - cartItem.price} more for <b>complimentary delivery</b></>}</p><span><i style={{ width: `${Math.min((cartItem.price / 450) * 100, 100)}%` }} /></span></div><div className="cart-line"><div className="cart-thumb"><ProductVisual small variant="thumbnail" /></div><div><span>ANÉ LUMIÈRE</span><h3>Velvet Dawn</h3><p>{cartItem.label} · {cartItem.quantity} {cartItem.quantity === 1 ? 'jar' : 'jars'}</p><button onClick={() => setCartItem(null)}>Remove</button></div><strong>R{cartItem.price}</strong></div><div className="cart-summary"><p><span>Subtotal</span><b>R{cartItem.price}</b></p><p><span>Delivery</span><b>{deliveryFee === 0 ? 'Complimentary' : `R${deliveryFee}`}</b></p><div><span>Total</span><strong>R{orderTotal}</strong></div><button className="add-btn" onClick={openCheckout}>Continue to checkout <ArrowRight size={18} /></button><small><ShieldCheck size={14} /> Secure checkout · PayFast ready</small></div></> : <div className="empty-cart"><ShoppingBag size={42} /><h3>Your bag is waiting</h3><p>Choose a ritual set to begin.</p><button className="primary-btn" onClick={() => setCartOpen(false)}>Shop Velvet Dawn</button></div>}</aside></>}
+      {cartOpen && <><div className="overlay" onClick={closeCart} /><aside className="cart-drawer" role="dialog" aria-modal="true" aria-label="Shopping bag" aria-hidden={checkoutOpen ? true : undefined} inert={checkoutOpen ? true : undefined} tabIndex="-1" ref={cartRef}><div className="drawer-head"><h2>Your bag <span>{cartItem ? `(${cartItem.quantity})` : '(0)'}</span></h2><button className="icon-btn drawer-close" onClick={closeCart} aria-label="Close shopping bag"><X /></button></div>{cartItem ? <><div className="delivery-progress"><p>{deliveryFee === 0 ? <><Check size={14} /> Complimentary delivery included</> : <><Truck size={14} /> R75 delivery on this order</>}</p><span><i style={{ width: `${Math.min((cartItem.price / 450) * 100, 100)}%` }} /></span></div><div className="cart-line"><ProductVisual variant="thumbnail" /><div><span>ANÉ LUMIÈRE</span><h3>Velvet Dawn</h3><p>{cartItem.label} · {cartItem.quantity} {cartItem.quantity === 1 ? 'jar' : 'jars'}</p><button onClick={() => setCartItem(null)}>Remove</button></div><strong>R{cartItem.price}</strong></div><div className="cart-summary"><p><span>Subtotal</span><b>R{cartItem.price}</b></p><p><span>Delivery</span><b>{deliveryFee === 0 ? 'Complimentary' : `R${deliveryFee}`}</b></p><div><span>Total</span><strong>R{orderTotal}</strong></div><button className="add-btn" onClick={openCheckout}>Continue to checkout <ArrowRight size={18} /></button><small><ShieldCheck size={14} /> Checkout preview · PayFast ready</small></div></> : <div className="empty-cart"><ShoppingBag size={38} /><h3>Your bag is empty</h3><p>Choose a set to continue.</p><button className="primary-btn" onClick={closeCart}>Continue shopping</button></div>}</aside></>}
 
-      {checkoutOpen && <><div className="overlay checkout-overlay" /><div className="checkout-modal" role="dialog" aria-modal="true" aria-label="Checkout" tabIndex="-1" ref={checkoutRef}><button className="checkout-close icon-btn" onClick={() => setCheckoutOpen(false)} aria-label="Close checkout"><X /></button><div className="checkout-brand"><Logo /><div className="checkout-product"><ProductVisual small variant="thumbnail" /><p><b>{cartItem.label}</b><span>{cartItem.quantity} × Velvet Dawn Face Cream</span></p><strong>R{cartItem.price}</strong></div><div className="checkout-total"><span>Total including delivery</span><b>R{orderTotal}</b></div><small>Payment integration prepared for PayFast.</small></div><div className="checkout-form">{checkoutStep === 1 ? <><span className="step-label">STEP 1 OF 2</span><h2>Where should we send your glow?</h2><form onSubmit={(e) => { e.preventDefault(); setCheckoutStep(2) }}><label>Email address<input type="email" placeholder="you@example.com" required /></label><div className="field-row"><label>First name<input required /></label><label>Last name<input required /></label></div><label>Street address<input placeholder="Street and number" required /></label><div className="field-row"><label>City<input required /></label><label>Postal code<input inputMode="numeric" required /></label></div><button className="add-btn">Continue to payment <ArrowRight size={18} /></button></form></> : <div className="payment-ready"><span className="step-label">STEP 2 OF 2</span><div className="payment-icon"><ShieldCheck /></div><h2>Ready for secure payment</h2><p>This storefront is prepared for PayFast. Connect your merchant credentials before launch to accept live payments.</p><div><Check /> Order details captured</div><div><Check /> Delivery information validated</div><div><Check /> PayFast integration point ready</div><button className="add-btn" onClick={() => setCheckoutOpen(false)}>Return to store</button><small>No payment was taken in this preview.</small></div>}</div></div></>}
+      {checkoutOpen && <><div className="overlay checkout-overlay" /><div className="checkout-modal" role="dialog" aria-modal="true" aria-label="Checkout" tabIndex="-1" ref={checkoutRef}><button className="checkout-close icon-btn" onClick={closeCheckout} aria-label="Close checkout"><X /></button><div className="checkout-brand"><Logo asText /><div className="checkout-product"><ProductVisual variant="thumbnail" /><p><b>{cartItem.label}</b><span>{cartItem.quantity} × Velvet Dawn Face Cream</span></p><strong>R{cartItem.price}</strong></div><div className="checkout-total"><span>Total including delivery</span><b>R{orderTotal}</b></div><small>Preview only. No payment is taken.</small></div><div className="checkout-form">{checkoutStep === 1 ? <><span className="step-label">DELIVERY · STEP 1 OF 2</span><h2>Where should we send your order?</h2><form onSubmit={submitDelivery}><label>Email address<input name="email" type="email" placeholder="you@example.com" required /></label><div className="field-row"><label>First name<input name="firstName" required /></label><label>Last name<input name="lastName" required /></label></div><label>Street address<input name="address" placeholder="Street and number" required /></label><div className="field-row"><label>City<input name="city" required /></label><label>Postal code<input name="postalCode" inputMode="numeric" required /></label></div><button className="add-btn">Review payment step <ArrowRight size={18} /></button></form></> : <div className="payment-ready"><span className="step-label">PAYMENT · STEP 2 OF 2</span><div className="payment-icon"><ShieldCheck /></div><h2>Ready for PayFast setup</h2><p>This preview validated and retained your delivery details for this checkout session.</p><div className="delivery-review"><b>{deliveryDetails.firstName} {deliveryDetails.lastName}</b><span>{deliveryDetails.address}</span><span>{deliveryDetails.city}, {deliveryDetails.postalCode}</span><span>{deliveryDetails.email}</span></div><button className="add-btn" onClick={closeCheckout}>Return to your bag</button><small>No payment was taken. Connect PayFast credentials before launch.</small></div>}</div></div></>}
 
-      {toast && <div className="toast" role="status" aria-live="polite"><Check size={16} /> {toast}</div>}
+      {toast && !cartOpen && !checkoutOpen && <div className="toast" role="status" aria-live="polite"><Check size={16} /> {toast}</div>}
     </div>
   )
 }

@@ -1,125 +1,130 @@
-import '@testing-library/jest-dom/vitest'
-import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
+import { afterEach, describe, expect, it } from 'vitest'
+import { cleanup, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import '@testing-library/jest-dom/vitest'
 import App from './App'
 
-afterEach(cleanup)
-
-beforeEach(() => {
+afterEach(() => {
+  cleanup()
   window.localStorage.clear()
-  window.scrollTo = () => {}
 })
 
+async function addBundle(user, name = 'Two jars, R499, Save R99') {
+  await user.click(screen.getByRole('button', { name }))
+  await user.click(screen.getByRole('button', { name: /Add to bag/i }))
+  return screen.getByRole('dialog', { name: 'Shopping bag' })
+}
+
 describe('Ané Lumière storefront', () => {
-  it('shows the supplied product and bundle choices', () => {
+  it('shows the real product choices without unverified proof claims', () => {
     render(<App />)
 
-    expect(screen.getAllByAltText(/Ané Lumière Velvet Dawn Face Cream/i)).toHaveLength(2)
-    expect(screen.getByRole('button', { name: /1 jar, The Essential, R299/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /2 jars, The Ritual Duo, R499/i })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByRole('button', { name: /3 jars, The Glow Set, R649/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /A softer state of skin/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'One jar, R299' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Two jars, R499, Save R99' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Three jars, R649, Save R248' })).toBeInTheDocument()
+    expect(screen.getByText(/Reviews will live here/i)).toBeInTheDocument()
+    expect(screen.queryByText(/286 reviews/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/97%/i)).not.toBeInTheDocument()
   })
 
-  it('calculates paid delivery below the free-delivery threshold', async () => {
+  it('calculates paid delivery for one jar', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole('button', { name: /1 jar, The Essential, R299/i }))
-    await user.click(screen.getByRole('button', { name: /Add to bag — R299/i }))
-
-    expect(screen.getByRole('dialog', { name: 'Shopping bag' })).toHaveTextContent('Add R151 more')
-    expect(screen.getByRole('dialog', { name: 'Shopping bag' })).toHaveTextContent('R75')
-    expect(screen.getByRole('dialog', { name: 'Shopping bag' })).toHaveTextContent('R374')
+    const cart = await addBundle(user, 'One jar, R299')
+    expect(within(cart).getByText('R75 delivery on this order')).toBeInTheDocument()
+    expect(within(cart).getByText('R374')).toBeInTheDocument()
   })
 
-  it('collects delivery details before the PayFast-ready step', async () => {
+  it('includes complimentary delivery for the two-jar set', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole('button', { name: /Add to bag — R499/i }))
-    await user.click(screen.getByRole('button', { name: /Continue to checkout/i }))
-
-    await user.type(screen.getByLabelText('Email address'), 'customer@example.com')
-    await user.type(screen.getByLabelText('First name'), 'Ane')
-    await user.type(screen.getByLabelText('Last name'), 'Customer')
-    await user.type(screen.getByLabelText('Street address'), '10 Dawn Road')
-    await user.type(screen.getByLabelText('City'), 'Cape Town')
-    await user.type(screen.getByLabelText('Postal code'), '8001')
-    await user.click(screen.getByRole('button', { name: /Continue to payment/i }))
-
-    expect(screen.getByRole('heading', { name: /Ready for secure payment/i })).toBeInTheDocument()
-    expect(screen.getByText(/No payment was taken/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Close checkout' })).toHaveFocus()
+    const cart = await addBundle(user)
+    expect(within(cart).getByText('Complimentary delivery included')).toBeInTheDocument()
+    expect(within(cart).getAllByText('R499').length).toBeGreaterThan(0)
   })
 
-  it('stores newsletter interest locally and labels preview behavior', async () => {
+  it('removes the cart item and transfers focus to the surviving close control', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    const email = screen.getByLabelText(/Enjoy 10% off/i)
-    await user.type(email, 'glow@example.com')
-    await user.click(screen.getByRole('button', { name: /Save email for launch updates/i }))
-
-    expect(window.localStorage.getItem('ane-lumiere-newsletter-email')).toBe('glow@example.com')
-    expect(screen.getByText(/Email saved for launch updates on this device/i)).toBeInTheDocument()
+    const cart = await addBundle(user)
+    await user.click(within(cart).getByRole('button', { name: 'Remove' }))
+    expect(within(cart).getByText('Your bag is empty')).toBeInTheDocument()
+    expect(within(cart).getByRole('button', { name: 'Close shopping bag' })).toHaveFocus()
   })
 
-  it('traps focus in a populated bag and restores focus after Escape', async () => {
+  it('validates and retains delivery details for the checkout preview', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    const opener = screen.getByRole('button', { name: /Add to bag — R499/i })
-    await user.click(opener)
-    const dialog = screen.getByRole('dialog', { name: 'Shopping bag' })
-    expect(dialog).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Close shopping bag' })).toHaveFocus()
+    const cart = await addBundle(user)
+    await user.click(within(cart).getByRole('button', { name: /Continue to checkout/i }))
+    const checkout = screen.getByRole('dialog', { name: 'Checkout' })
+    await user.click(within(checkout).getByRole('button', { name: /Review payment step/i }))
+    expect(within(checkout).getByRole('heading', { name: /Where should we send your order/i })).toBeInTheDocument()
 
-    await user.keyboard('{Shift>}{Tab}{/Shift}')
-    expect(dialog).toContainElement(document.activeElement)
+    await user.type(within(checkout).getByLabelText('Email address'), 'hello@example.com')
+    await user.type(within(checkout).getByLabelText('First name'), 'Ane')
+    await user.type(within(checkout).getByLabelText('Last name'), 'Tester')
+    await user.type(within(checkout).getByLabelText('Street address'), '12 Dawn Road')
+    await user.type(within(checkout).getByLabelText('City'), 'Cape Town')
+    await user.type(within(checkout).getByLabelText('Postal code'), '8001')
+    await user.click(within(checkout).getByRole('button', { name: /Review payment step/i }))
+
+    expect(within(checkout).getByRole('heading', { name: 'Ready for PayFast setup' })).toBeInTheDocument()
+    expect(within(checkout).getByText('Ane Tester')).toBeInTheDocument()
+    expect(within(checkout).getByText('12 Dawn Road')).toBeInTheDocument()
+    expect(within(checkout).getByText(/No payment was taken/i)).toBeInTheDocument()
+  })
+
+  it('closes only checkout on the first Escape and restores each opener', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    const addButton = screen.getByRole('button', { name: /Add to bag/i })
+    await user.click(addButton)
+    const cart = screen.getByRole('dialog', { name: 'Shopping bag' })
+    const checkoutButton = within(cart).getByRole('button', { name: /Continue to checkout/i })
+    await user.click(checkoutButton)
+
+    await user.keyboard('{Escape}')
+    expect(screen.queryByRole('dialog', { name: 'Checkout' })).not.toBeInTheDocument()
+    expect(screen.getByRole('dialog', { name: 'Shopping bag' })).toBeInTheDocument()
+    await waitFor(() => expect(checkoutButton).toHaveFocus())
+
     await user.keyboard('{Escape}')
     expect(screen.queryByRole('dialog', { name: 'Shopping bag' })).not.toBeInTheDocument()
-    await waitFor(() => expect(opener).toHaveFocus())
+    await waitFor(() => expect(addButton).toHaveFocus())
   })
 
-  it('supports complimentary delivery and cart removal', async () => {
+  it('saves newsletter email only in local storage', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole('button', { name: /Add to bag — R499/i }))
-    const bag = screen.getByRole('dialog', { name: 'Shopping bag' })
-    expect(bag).toHaveTextContent('You qualify for complimentary delivery')
-    expect(bag).toHaveTextContent('R499')
-    await user.click(screen.getByRole('button', { name: 'Remove' }))
-    expect(screen.getByRole('heading', { name: /Your bag is waiting/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Close shopping bag' })).toHaveFocus()
+    const email = screen.getByLabelText('Save your email for launch updates')
+    await user.type(email, 'ritual@example.com')
+    await user.click(screen.getByRole('button', { name: 'Save email for launch updates' }))
+
+    expect(window.localStorage.getItem('ane-lumiere-newsletter-email')).toBe('ritual@example.com')
+    expect(email).toHaveValue('')
+    expect(screen.getByRole('status')).toHaveTextContent('Email saved on this device')
   })
 
-  it('keeps invalid checkout details on the delivery step', async () => {
+  it('opens and closes FAQ answers with accessible state', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole('button', { name: /Add to bag — R499/i }))
-    await user.click(screen.getByRole('button', { name: /Continue to checkout/i }))
-    await user.type(screen.getByLabelText('Email address'), 'not-an-email')
-    await user.click(screen.getByRole('button', { name: /Continue to payment/i }))
-
-    expect(screen.getByRole('heading', { name: /Where should we send your glow/i })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: /Ready for secure payment/i })).not.toBeInTheDocument()
+    const question = screen.getByRole('button', { name: 'Where do you deliver?' })
+    expect(question).toHaveAttribute('aria-expanded', 'false')
+    await user.click(question)
+    expect(question).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByText(/Delivery costs R75 for orders below R450/i)).toBeInTheDocument()
   })
 
-  it('updates reviews and FAQ answers', async () => {
-    const user = userEvent.setup()
-    render(<App />)
-
-    expect(screen.getByText(/My skin looks rested/i)).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: 'Next review' }))
-    expect(screen.getByText(/I noticed a softer, brighter look/i)).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /Is it suitable for sensitive skin/i }))
-    expect(screen.getByText(/fragrance-free formula uses calming ingredients/i)).toBeInTheDocument()
-  })
-
-  it('contains mobile menu focus and publishes policy details', async () => {
+  it('traps focus in the mobile menu and closes it from the linked logo', async () => {
     const user = userEvent.setup()
     render(<App />)
 
@@ -127,38 +132,19 @@ describe('Ané Lumière storefront', () => {
     await user.click(opener)
     const menu = screen.getByRole('dialog', { name: 'Navigation menu' })
     expect(menu).toContainElement(document.activeElement)
-    await user.keyboard('{Escape}')
+    await user.click(within(menu).getByRole('link', { name: 'Ané Lumière home' }))
+    expect(screen.queryByRole('dialog', { name: 'Navigation menu' })).not.toBeInTheDocument()
     await waitFor(() => expect(opener).toHaveFocus())
-    expect(screen.getByText(/Orders of R450 or more include complimentary delivery/i)).toBeInTheDocument()
-    expect(screen.getByText(/newsletter saves one email address only in your browser storage/i)).toBeInTheDocument()
   })
 
-  it('lets visitors pause and resume motion effects', async () => {
+  it('uses a non-link brand mark inside checkout', async () => {
     const user = userEvent.setup()
     render(<App />)
 
-    await user.click(screen.getByRole('button', { name: 'Pause motion effects' }))
-    expect(screen.getByRole('button', { name: 'Play motion effects' })).toBeInTheDocument()
-    expect(document.documentElement).not.toHaveClass('motion-active')
-    expect(document.querySelector('[data-scene]')).toHaveStyle({ '--scene-progress': '.65' })
-    await user.click(screen.getByRole('button', { name: 'Play motion effects' }))
-    expect(screen.getByRole('button', { name: 'Pause motion effects' })).toBeInTheDocument()
-  })
-
-  it('updates a scene as soon as it enters the motion observer', async () => {
-    const originalObserver = window.IntersectionObserver
-    let notify
-    window.IntersectionObserver = class {
-      constructor(callback) { notify = callback }
-      observe() {}
-      disconnect() {}
-    }
-
-    render(<App />)
-    const scene = document.querySelector('[data-scene]')
-    scene.getBoundingClientRect = () => ({ top: 0, height: 1000 })
-    act(() => notify([{ target: scene, isIntersecting: true }]))
-    await waitFor(() => expect(scene.style.getPropertyValue('--scene-progress')).not.toBe('.65'))
-    window.IntersectionObserver = originalObserver
+    const cart = await addBundle(user)
+    await user.click(within(cart).getByRole('button', { name: /Continue to checkout/i }))
+    const checkout = screen.getByRole('dialog', { name: 'Checkout' })
+    expect(within(checkout).queryByRole('link', { name: 'Ané Lumière home' })).not.toBeInTheDocument()
+    expect(within(checkout).getByLabelText('Ané Lumière')).toBeInTheDocument()
   })
 })

@@ -13,16 +13,6 @@ export function useSceneMotion(active) {
     }
 
     const visibleScenes = new Set()
-    const observer = window.IntersectionObserver ? new IntersectionObserver((entries) => {
-      entries.forEach((entry) => entry.isIntersecting ? visibleScenes.add(entry.target) : visibleScenes.delete(entry.target))
-    }, { rootMargin: '80% 0px' }) : null
-    scenes.forEach((scene) => {
-      scene.style.setProperty('--scene-progress', '.65')
-      if (observer) observer.observe(scene)
-      else visibleScenes.add(scene)
-    })
-
-    if (!document.hidden) root.classList.add('motion-active')
     let frame = 0
     let pointerX = window.innerWidth / 2
     let pointerY = window.innerHeight / 2
@@ -52,6 +42,18 @@ export function useSceneMotion(active) {
     const requestUpdate = () => {
       if (!frame) frame = window.requestAnimationFrame(update)
     }
+    const observer = window.IntersectionObserver ? new IntersectionObserver((entries) => {
+      entries.forEach((entry) => entry.isIntersecting ? visibleScenes.add(entry.target) : visibleScenes.delete(entry.target))
+      scrollDirty = true
+      requestUpdate()
+    }, { rootMargin: '80% 0px' }) : null
+    scenes.forEach((scene) => {
+      scene.style.setProperty('--scene-progress', '.65')
+      if (observer) observer.observe(scene)
+      else visibleScenes.add(scene)
+    })
+
+    if (!document.hidden) root.classList.add('motion-active')
     const onScroll = () => { scrollDirty = true; requestUpdate() }
     const onResize = () => { scrollDirty = true; pointerDirty = true; requestUpdate() }
     const onPointer = (event) => {

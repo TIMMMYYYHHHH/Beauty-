@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom/vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import App from './App'
@@ -141,5 +141,22 @@ describe('Ané Lumière storefront', () => {
     expect(document.querySelector('[data-scene]')).toHaveStyle({ '--scene-progress': '.65' })
     await user.click(screen.getByRole('button', { name: 'Play motion effects' }))
     expect(screen.getByRole('button', { name: 'Pause motion effects' })).toBeInTheDocument()
+  })
+
+  it('updates a scene as soon as it enters the motion observer', async () => {
+    const originalObserver = window.IntersectionObserver
+    let notify
+    window.IntersectionObserver = class {
+      constructor(callback) { notify = callback }
+      observe() {}
+      disconnect() {}
+    }
+
+    render(<App />)
+    const scene = document.querySelector('[data-scene]')
+    scene.getBoundingClientRect = () => ({ top: 0, height: 1000 })
+    act(() => notify([{ target: scene, isIntersecting: true }]))
+    await waitFor(() => expect(scene.style.getPropertyValue('--scene-progress')).not.toBe('.65'))
+    window.IntersectionObserver = originalObserver
   })
 })
